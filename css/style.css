@@ -2,15 +2,8 @@
 /* Custom Properties */
 @import url("./variables.css");
 
-/* Layouts */
-@import url("./layouts/about-sections.css");
-@import url("./layouts/contact-section.css");
-@import url("./layouts/footer.css");
-
 /* Components */
-@import url("../components/avatar/avatar.css");
-@import url("../components/work-card/work-card.css");
-@import url("../components/service-card/service-card.css");
+@import url("./avatar.css");
 
 /** RESET STYLES */
 *::after,
@@ -47,7 +40,7 @@ body {
         grid-column-end: -1;
         margin-bottom: 2rem;
     }
-    
+
     & img {
         width: 100%;
         height: 100%;
@@ -92,4 +85,12 @@ body {
         font-size: var(--misc-size);
         font-weight: var(--misc-weight);
     }
+}
+
+/* Components */
+.avatar {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 100%;
+    overflow: hidden;
 }

@@ -1,203 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- TODO: agregar metadatos -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anibal | Portfolio</title>
-    <style>
-        @view-transition {
-            navigation: auto;
-        }
-    </style>
-    <link rel="shortcut icon" href="assets/avatar.svg" type="image/x-icon" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
-      rel="stylesheet"
-    />
+<html lang="es">
 
-    <link rel="stylesheet" href="src/styles/style.css" />
-  </head>
-  <body>
-    <main class="container">
-      <section class="header">
-        <div class="avatar">
-          <img src="assets/me.jpg" alt="un hombre de lado mierando de reojo" />
-        </div>
+<head>
+  <!-- TODO: agregar metadatos -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anibal | Portfolio</title>
 
-        <h1>Hola, Soy Anibal Mendoza</h1>
+  <link rel="shortcut icon" href="assets/avatar.svg" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
 
-        <p>
-          Me apasiona la tecnología y el desarrollo software, por lo que me
-          dedico a resolver problemas reales implementando soluciones mediante
-          el diseño de algoritmos y el desarrollo de aplicaciones web Fullstack
-        </p>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
 
-        <a href="/contact">Ir a contacto</a>
-      </section>
+<body>
+  <main class="container">
+    <section class="header">
+      <div class="avatar">
+        <img src="assets/me.jpg" alt="un hombre de lado mierando de reojo" />
+      </div>
 
-      <section class="works">
-        <header>
-          <h2>Trabajos recientes</h2>
-        </header>
+      <h1>Hola, Soy Anibal Mendoza</h1>
 
-        <article class="work-card">
-          <div class="work-img">
-            <img
-              src="https://images.unsplash.com/photo-1587620931276-d97f425f62b9?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="project preview image"
-            />
-          </div>
+    </section>
+</body>
 
-          <div class="work-desc">
-            <h3>Título del proyecto</h3>
-
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad, ipsa
-              quibusdam eaque facere obcaecati nostrum earum ex fugit, nam
-              provident quas quidem doloribus odit sint voluptates nobis
-              voluptatibus, reprehenderit necessitatibus!
-            </p>
-
-            <button>Caso de estudio</button>
-          </div>
-        </article>
-        <article class="work-card">
-          <div class="work-img">
-            <img
-              src="https://images.unsplash.com/photo-1587620931276-d97f425f62b9?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="project preview image"
-            />
-          </div>
-
-          <div class="work-desc">
-            <h3>Título del proyecto</h3>
-
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad, ipsa
-              quibusdam eaque facere obcaecati nostrum earum ex fugit, nam
-              provident quas quidem doloribus odit sint voluptates nobis
-              voluptatibus, reprehenderit necessitatibus! Lorem ipsum dolor sit
-              amet consectetur adipisicing elit. Ad, ipsa quibusdam eaque facere
-              obcaecati nostrum earum ex fugit, nam provident quas quidem
-              doloribus odit sint voluptates nobis voluptatibus, reprehenderit
-              necessitatibus!
-            </p>
-
-            <button>Caso de estudio</button>
-          </div>
-        </article>
-        <article class="work-card">
-          <div class="work-img">
-            <img
-              src="https://images.unsplash.com/photo-1587620931276-d97f425f62b9?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="project preview image"
-            />
-          </div>
-
-          <div class="work-desc">
-            <h3>Título del proyecto</h3>
-
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad, ipsa
-            </p>
-
-            <button>Caso de estudio</button>
-          </div>
-        </article>
-      </section>
-
-      <section class="services">
-        <header>
-          <h2>Servios</h2>
-        </header>
-
-        <article class="service-card">
-          <h3>Maquetar vistas</h3>
-          <p>Desarrollar vistas (frontend) de una página web</p>
-        </article>
-
-        <article class="service-card">
-          <h3>Diseños de bases de datos</h3>
-          <p>Diseño y desarrollo de lógica de negocio de una aplicación</p>
-        </article>
-
-        <article class="service-card">
-          <h3>Desarrollo de APIs REST</h3>
-          <p>
-            Programación de APIs REST para la interación de los datos con los
-            usuarios y la base datos
-          </p>
-        </article>
-      </section>
-
-      <section class="about">
-        <header>
-          <h2>Sobre mi</h2>
-        </header>
-
-        <p>
-          Desde muy joven me ha atraido la tecnología y el desarrollo de la
-          misma. No soy una persona de muchos recursos pero he trabajado duro
-          para poder estudiar y practicar programación hasta aprenderla y
-          ejercerla de forma profesional. En mis tiempos libres suelo ver videos
-          de algun gameplay o sino jugar alguno de mis video juegos favoritos.
-          Tambien me gusta el anime y manga.
-        </p>
-
-        <article>
-          <header>
-            <h3>Experiencia laboral</h3>
-          </header>
-
-          <div class="experience-card">
-            <h4>CML Exports</h4>
-
-            <p>
-              Estuve cumpliendo funciones como desarrollador Fullstack y entre
-              algunas de las muchas tareas que realicé ahí resaltan algunas como
-              <strong>módulo de generación de facturas</strong>,
-              <strong>módulo de creacion de roles y permisos</strong> y
-              <strong>módulo de configuración de perfil de usuarios</strong>
-            </p>
-          </div>
-        </article>
-      </section>
-
-      <section class="contact">
-        <header>
-          <h2>Ponte en contacto</h2>
-        </header>
-
-        <div class="email">
-          <p>
-            <a href="mailto:anibalmd32@gmail.com">
-              Contátame y hagamos algo increible
-            </a>
-          </p>
-
-          <button>Copiar email</button>
-        </div>
-
-        <div class="social">
-          <a href="#">
-            <img src="assets/icons/github.svg" alt="" />
-          </a>
-          <a href="#">
-            <img src="assets/icons/linkedin.svg" alt="" />
-          </a>
-          <a href="#">
-            <img src="assets/icons/instagram.svg" alt="" />
-          </a>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <p>Desarrollado por Anibal Mendoza</p>
-    </footer>
-    <script src="src/main.js" type="module"></script>
-  </body>
 </html>
