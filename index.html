@@ -2,29 +2,131 @@
 <html lang="es">
 
 <head>
-  <!-- TODO: agregar metadatos -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anibal | Portfolio</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description"
+		content="Anibal Mendoza - Desarrollador Web Fullstack con más de 3 años de experiencia en NodeJS, React, PHP y más." />
+	<title>Anibal Mendoza | Fullstack Developer</title>
 
-  <link rel="shortcut icon" href="assets/avatar.svg" type="image/x-icon" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+	<link rel="shortcut icon" href="assets/avatar.svg" type="image/x-icon" />
 
-  <link rel="stylesheet" href="css/style.css" />
+	<!-- Icons -->
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+
+	<link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body>
-  <main class="container">
-    <section class="header">
-      <div class="avatar">
-        <img src="assets/me.jpg" alt="un hombre de lado mierando de reojo" />
-      </div>
+	<div class="container">
+		<nav class="nav-wrapper">
+			<a href="index.html" class="nav-link active">Español</a>
+			<a href="en.html" class="nav-link">English</a>
+		</nav>
 
-      <h1>Hola, Soy Anibal Mendoza</h1>
+		<section class="hero">
+			<div class="avatar-container">
+				<img src="assets/me.jpg" alt="Anibal Mendoza" class="avatar" />
+			</div>
+			<h1>Anibal Mendoza</h1>
+			<p>Desarrollador Web Fullstack especializado en construir soluciones escalables y eficientes con más de 3
+				años de experiencia.</p>
 
-    </section>
+			<div class="cta-group">
+				<a href="assets/cv/cv_anibal_es.pdf" download class="btn btn-primary">
+					<i data-lucide="download"></i> Descargar CV
+				</a>
+				<a href="#experience" class="btn btn-outline">
+					Ver Experiencia
+				</a>
+			</div>
+		</section>
+
+		<section id="experience">
+			<h2 class="section-title">
+				<i data-lucide="briefcase"></i> Experiencia Profesional
+			</h2>
+			<div class="experience-list">
+				<div class="card experience-item">
+					<h3>Intercomwws</h3>
+					<span class="experience-date">01/2025 - Actualmente</span>
+					<ul class="experience-details">
+						<li>Implementé servicios de notificaciones en tiempo real (WebSockets) mejorando la reactividad
+							del sistema.</li>
+						<li>Lideré la integración técnica con la API Sumsub para automatizar procesos de cumplimiento
+							KYC.</li>
+						<li>Diseñé microservicios escalables asegurando alta disponibilidad y rendimiento óptimo.</li>
+					</ul>
+				</div>
+				<div class="card experience-item">
+					<h3>CML Exports</h3>
+					<span class="experience-date">05/2023 - 12/2024</span>
+					<ul class="experience-details">
+						<li>Sincronización en tiempo real de inventarios complejos entre múltiples almacenes y el
+							e-commerce.</li>
+						<li>Integración de Stripe para pagos globales, implementando flujos de seguridad y prevención de
+							fraude.</li>
+						<li>Desarrollo de dashboards personalizados para el seguimiento de KPis operativos en tiempo
+							real.</li>
+					</ul>
+				</div>
+				<div class="card experience-item">
+					<h3>Latinoapuesta</h3>
+					<span class="experience-date">06/2022 - 01/2023</span>
+					<ul class="experience-details">
+						<li>Desarrollé lógica transaccional crítica para el procesamiento de apuestas y gestión de
+							saldos.</li>
+						<li>Integración de APIs de proveedores de juegos externos mediante protocolos seguros.</li>
+						<li>Optimización de consultas SQL complejas para manejar picos de tráfico durante eventos
+							deportivos.</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section id="skills">
+			<h2 class="section-title">
+				<i data-lucide="code-2"></i> Habilidades
+			</h2>
+			<div class="skills-grid">
+				<div class="skill-tag"><i class="devicon-nodejs-plain colored"></i> Node.js</div>
+				<div class="skill-tag"><i class="devicon-react-original colored"></i> React</div>
+				<div class="skill-tag">
+					<i class="devicon-nextjs-original-wordmark"></i>
+					Next.js
+				</div>
+				<div class="skill-tag"><i class="devicon-php-plain colored"></i> PHP</div>
+				<div class="skill-tag"><i class="devicon-python-plain colored"></i> Python</div>
+				<div class="skill-tag"><i class="devicon-nestjs-plain colored"></i> NestJS</div>
+				<div class="skill-tag"><i class="devicon-laravel-original colored"></i> Laravel</div>
+				<div class="skill-tag"><i class="devicon-django-plain"></i> Django</div>
+				<div class="skill-tag"><i class="devicon-express-original"></i> Express</div>
+				<div class="skill-tag"><i class="devicon-tailwindcss-original colored"></i> Tailwind</div>
+				<div class="skill-tag"><i class="devicon-mysql-plain colored"></i> MySQL</div>
+				<div class="skill-tag"><i class="devicon-postgresql-plain colored"></i> PostgreSQL</div>
+				<div class="skill-tag"><i class="devicon-mongodb-plain colored"></i> MongoDB</div>
+				<div class="skill-tag"><i class="devicon-redis-plain colored"></i> Redis</div>
+			</div>
+		</section>
+
+		<section id="contact">
+			<h2 class="section-title">
+				<i data-lucide="mail"></i> Contacto
+			</h2>
+			<div class="card"
+				style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+				<p style="max-width: 500px;">¿Tienes un proyecto interesante o una oportunidad laboral? Estaré encantado
+					de conversar contigo.</p>
+				<a href="mailto:anibalmd32@gmail.com" class="btn btn-primary btn-lg">
+					<i data-lucide="send"></i> ¡Hablemos!
+				</a>
+			</div>
+		</section>
+	</div>
+
+	<script>
+		lucide.createIcons();
+	</script>
 </body>
 
 </html>
