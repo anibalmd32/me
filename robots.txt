@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://anibalmendoza.dev/sitemap.xml

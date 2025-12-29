@@ -1,0 +1,15 @@
+{
+    "name": "Anibal Mendoza Portfolio",
+    "short_name": "Anibal Mendoza",
+    "icons": [
+        {
+            "src": "assets/avatar.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#0d1117",
+    "theme_color": "#58a6ff"
+}
