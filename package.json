@@ -1,0 +1,32 @@
+{
+  "name": "anibalmendoza-dev",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "icons": "node scripts/icons.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.11",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/caveat": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/three": "^0.187.0",
+    "satori": "^0.63.2"
+  },
+  "overrides": {
+    "satori": {
+      "fflate": "^0.8.3"
+    }
+  }
+}
