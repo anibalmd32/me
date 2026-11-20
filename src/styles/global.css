@@ -1,0 +1,781 @@
+/* ==========================================================================
+   BlueCode notebook: tokens
+   Source of truth: bluecode-animacion/assets/brand-kit/tokens.ts
+   Light = cream grid paper. Dark = the same notebook at night (blueprint).
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Constants: identical in both themes */
+  --c-ink: #1b1d24;
+  --c-paper: #f4efe3;
+  --c-blue: #2340d9;
+  --c-blue-deep: #15248f;
+  --c-marker: #ff6a1f;
+  --c-sticky: #ffe68a;
+  --c-night: #131a35;
+
+  /* Paper */
+  --paper: #f4efe3;
+  --paper-shade: #e8e0ce;
+  /* The grid is a ground, not a pattern: faint enough that text and fields
+     drawn over it never have to compete with it. */
+  --grid: rgb(64 104 168 / 0.065);
+  --grid-major: rgb(64 104 168 / 0.12);
+  --margin-line: rgb(255 106 31 / 0.24);
+  --vignette: rgb(92 70 30 / 0.08);
+
+  /* A plain sheet laid on the grid page (the contact form) */
+  --sheet: #fffcf6;
+  --sheet-line: rgb(27 29 36 / 0.1);
+  --field: #f6f1e6;
+  --field-line: rgb(27 29 36 / 0.22);
+
+  /* Ink */
+  --ink: #1b1d24;
+  --ink-soft: #5b5f6c;
+  --ink-faint: #9a9c9f;
+  --blue: #2340d9;
+  --blue-wash: rgb(35 64 217 / 0.13);
+
+  /* Marker: one thing at a time */
+  --marker: #ff6a1f;
+  --marker-wash: rgb(255 122 46 / 0.42);
+  --marker-solid: #f9be97;
+  /* How a highlight is laid down: a translucent pass over ink on paper */
+  --mark-bg: var(--marker-wash);
+  --mark-fg: currentColor;
+  --mark-size: 76%;
+  --mark-pos: 64%;
+
+  /* Semantic */
+  --good: #157a44;
+  --bad: #c22f23;
+
+  /* Code card, tape, sticky */
+  --code-bg: #131a35;
+  --code-text: #ece8de;
+  --code-soft: #a9b1cf;
+  --code-line: rgb(255 255 255 / 0.13);
+  --tape: rgb(236 221 178 / 0.78);
+  --sticky: #ffe68a;
+  --shadow: 70 50 10;
+
+  --syn-keyword: #ff8f57;
+  --syn-string: #a7e3b5;
+  --syn-number: #9dbdff;
+  --syn-fn: #ffd27a;
+  --syn-comment: #8a93b5;
+
+  /* Active tone (paper). Sections and the header swap these as a set. */
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --fg-soft: var(--ink-soft);
+  --accent: var(--blue);
+  --rule: var(--ink);
+  --btn-bg: var(--c-blue);
+  --btn-fg: var(--c-paper);
+  --focus: var(--blue);
+
+  /* Layout */
+  --gutter: clamp(1.25rem, 5.5vw, 5.5rem);
+  --max: 78rem;
+  /* x of the content's left edge at any width (gutter, or the centred column) */
+  --edge: max(var(--gutter), calc((100vw - var(--max)) / 2));
+  /* the notebook's margin line always runs just left of the writing */
+  --margin-x: calc(var(--edge) - var(--gutter) * 0.5);
+  --header-h: 3.75rem;
+  --section-gap: clamp(5rem, 11vw, 9.5rem);
+  --block-gap: clamp(2rem, 5vw, 3.5rem);
+
+  --radius-control: 5px;
+  --radius-paper: 3px;
+  --radius-sheet: 8px;
+  --radius-card: 12px;
+
+  --shadow-note: 0 1rem 1.7rem rgb(var(--shadow) / 0.18), 0 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sheet: 0 1px 0 rgb(var(--shadow) / 0.06), 0 1.25rem 2.5rem -0.75rem rgb(var(--shadow) / 0.18);
+  --shadow-tape: 0 2px 4px rgb(60 45 10 / 0.12);
+  --shadow-page: 0 48px 60px rgb(60 45 10 / 0.28);
+
+  --text-display: clamp(2.5rem, 6vw, 5rem);
+  --text-headline: clamp(2.2rem, 5.2vw, 4.25rem);
+  --text-title: clamp(1.5rem, 2.5vw, 2.1rem);
+  --text-title-small: clamp(1.35rem, 2vw, 1.7rem);
+  --text-label: 1.1rem;
+  --text-small: 0.95rem;
+  --hand-note: 1.45rem;
+  --hand-tag: 1.35rem;
+
+  /* Motion: brand curves (EASE in tokens.ts) */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-ink: cubic-bezier(0.45, 0.05, 0.25, 1);
+  --ease-snap: cubic-bezier(0.2, 1.4, 0.4, 1);
+  --state: 0.18s var(--ease-out);
+
+  --paper-layers:
+    linear-gradient(
+      90deg,
+      transparent calc(var(--margin-x) - 1px),
+      var(--margin-line) calc(var(--margin-x) - 1px),
+      var(--margin-line) calc(var(--margin-x) + 1px),
+      transparent calc(var(--margin-x) + 1px)
+    ),
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  --paper-sizes: 100% 100%, 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  --grid-layers:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  --grid-sizes: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --paper: #131a35;
+  --paper-shade: #0d1228;
+  --grid: rgb(157 189 255 / 0.04);
+  --grid-major: rgb(157 189 255 / 0.075);
+  --margin-line: rgb(255 106 31 / 0.28);
+  --vignette: rgb(0 0 0 / 0.22);
+
+  --sheet: #1a2247;
+  --sheet-line: rgb(236 232 222 / 0.1);
+  --field: #10162e;
+  --field-line: rgb(236 232 222 / 0.2);
+
+  --ink: #ece8de;
+  --ink-soft: #a9b1cf;
+  --ink-faint: #6e7799;
+  --blue: #9dbdff;
+  --blue-wash: rgb(157 189 255 / 0.14);
+
+  --marker-wash: rgb(255 122 46 / 0.55);
+  --marker-solid: #e2621f;
+  /* On night paper a translucent pass turns rust. The marker goes on solid,
+     with dark ink over it, the way it already does on the blue page. */
+  --mark-bg: var(--c-marker);
+  --mark-fg: var(--c-ink);
+  --mark-size: 94%;
+  --mark-pos: 56%;
+
+  --good: #4cc98a;
+  --bad: #ff8a7d;
+
+  --code-bg: #0a0f24;
+  --tape: rgb(236 221 178 / 0.55);
+  --sticky: #f3d86e;
+  --shadow: 0 0 0;
+
+  --btn-bg: var(--blue);
+  --btn-fg: var(--c-night);
+}
+
+/* Tones: a section (or the header while it sits over one) takes the whole set. */
+body [data-tone='code'],
+html[data-tone='code'] .site-header {
+  --bg: var(--code-bg);
+  --fg: var(--code-text);
+  --fg-soft: var(--code-soft);
+  --accent: #9dbdff;
+  --rule: var(--code-text);
+  --btn-bg: var(--code-text);
+  --btn-fg: var(--c-night);
+  --focus: #ffd27a;
+  --good: #4cc98a;
+  --bad: #ff8a7d;
+}
+
+body [data-tone='sticky'],
+html[data-tone='sticky'] .site-header {
+  --bg: var(--sticky);
+  --fg: var(--c-ink);
+  --fg-soft: #54576a;
+  --accent: var(--c-blue);
+  --rule: var(--c-ink);
+  --btn-bg: var(--c-ink);
+  --btn-fg: var(--c-sticky);
+  --focus: var(--c-blue);
+  --good: #157a44;
+  --bad: #b3261c;
+}
+
+body [data-tone='blue'],
+html[data-tone='blue'] .site-header {
+  --bg: var(--c-blue);
+  --fg: var(--c-paper);
+  --fg-soft: #d5dbf7;
+  --accent: var(--c-sticky);
+  --rule: var(--c-paper);
+  --btn-bg: var(--c-paper);
+  --btn-fg: var(--c-blue-deep);
+  --focus: var(--c-sticky);
+  --bad: var(--c-sticky);
+}
+
+body [data-tone='marker'],
+html[data-tone='marker'] .site-header {
+  --bg: var(--c-marker);
+  --fg: var(--c-ink);
+  --fg-soft: #3a2a1f;
+  --accent: var(--c-ink);
+  --rule: var(--c-ink);
+  --focus: var(--c-ink);
+}
+
+body [data-tone='desk'],
+html[data-tone='desk'] .site-header {
+  --bg: var(--paper-shade);
+}
+
+/* The hero's marked module, at the moment it fills the screen. */
+html[data-tone='wash'] .site-header {
+  --bg: var(--hero-wash, var(--marker-solid));
+}
+
+/* A paper note stuck on a coloured ground: always cream, in both themes. */
+body [data-tone='note'] {
+  --bg: var(--c-paper);
+  --fg: var(--c-ink);
+  --fg-soft: #5b5f6c;
+  --accent: var(--c-blue);
+  --rule: var(--c-ink);
+  --btn-bg: var(--c-blue);
+  --btn-fg: var(--c-paper);
+  --focus: var(--c-blue);
+  --good: #157a44;
+  --bad: #b3261c;
+}
+
+body [data-tone] {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-color: var(--ink-faint) transparent;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--fg);
+  caret-color: var(--blue);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+/* The paper stays still; the ink moves over it. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--paper);
+  background-image: var(--paper-layers);
+  background-size: var(--paper-sizes);
+}
+
+/* Warm vignette over everything, like the videos. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 55%, var(--vignette) 100%);
+}
+
+::selection {
+  background: var(--marker-wash);
+  color: inherit;
+}
+
+:root[data-theme='dark'] ::selection,
+[data-tone='code'] ::selection,
+[data-tone='blue'] ::selection {
+  background: var(--c-marker);
+  color: var(--c-ink);
+}
+
+[data-tone='marker'] ::selection {
+  background: var(--c-ink);
+  color: var(--c-marker);
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure,
+blockquote {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-thickness: 2.5px;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Type
+   ========================================================================== */
+
+.display {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.h1 {
+  font-size: var(--text-display);
+}
+
+.h2 {
+  font-size: var(--text-headline);
+}
+
+.h3 {
+  font-size: var(--text-title);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+.h4 {
+  font-size: var(--text-title-small);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.h5 {
+  font-size: var(--text-label);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 60ch;
+  font-size: clamp(1.1rem, 1.45vw, 1.3rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.soft {
+  color: var(--fg-soft);
+}
+
+/* Handwritten annotation: the author's voice. Never long text. */
+.hand {
+  font-family: var(--font-hand), cursive;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+  line-height: 1.05;
+  color: var(--accent);
+  rotate: -2deg;
+}
+
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.86em;
+  font-variant-ligatures: none;
+}
+
+/* Marker highlight: "look here". One at a time. */
+mark,
+.marker {
+  color: var(--mark-fg);
+  background-color: transparent;
+  background-image: linear-gradient(var(--mark-bg), var(--mark-bg));
+  background-repeat: no-repeat;
+  background-size: 100% var(--mark-size);
+  background-position: 0 var(--mark-pos);
+  padding-inline: 0.1em;
+  margin-inline: -0.1em;
+  border-radius: 0.08em 0.22em 0.1em 0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+.wrap {
+  width: min(100% - var(--gutter) * 2, var(--max));
+  margin-inline: auto;
+}
+
+.flow {
+  position: relative;
+  padding-block: var(--section-gap);
+}
+
+/* Pinned scroll scenes. Without the .motion class (no JS, or reduced motion)
+   every scene is plain, readable flow content. */
+.scene {
+  position: relative;
+}
+
+.stage {
+  position: relative;
+}
+
+html.motion .scene {
+  height: calc(var(--len, 200) * 1svh);
+}
+
+html.is-gliding {
+  scroll-behavior: smooth;
+}
+
+html.motion [data-page] {
+  scroll-margin-top: calc((var(--header-h) + 1rem) * -1);
+}
+
+html.motion .stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  /* Each stage is its own world: nothing inside can invalidate the page. */
+  contain: layout paint style;
+}
+
+/* A scene that continues the colour of the block above overlaps it by 1px,
+   so no hairline of paper shows between the two at fractional zoom levels. */
+.scene--join {
+  margin-top: -1px;
+}
+
+html.motion .is-off {
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-height: 3rem;
+  padding: 0.7em 1.25em;
+  border: 2px solid var(--rule);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--fg);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--state),
+    color var(--state),
+    translate 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out);
+}
+
+.btn svg {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+
+.btn:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.btn:active {
+  translate: 0 1px;
+}
+
+.btn--primary {
+  border-color: var(--btn-bg);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+}
+
+.btn--primary:hover {
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  translate: 0 -2px;
+  box-shadow: 0 8px 18px rgb(var(--shadow) / 0.22);
+}
+
+.btn--primary:active {
+  translate: 0 0;
+  box-shadow: 0 2px 6px rgb(var(--shadow) / 0.2);
+}
+
+.btn[aria-disabled='true'] {
+  border-style: dashed;
+  border-color: var(--fg-soft);
+  color: var(--fg-soft);
+  cursor: not-allowed;
+}
+
+.btn[aria-disabled='true']:hover {
+  background: transparent;
+  color: var(--fg-soft);
+}
+
+.btn__soon {
+  font-family: var(--font-hand), cursive;
+  font-size: 1.2em;
+  line-height: 0.8;
+}
+
+/* Masking tape with torn edges (brand kit: Notes.tsx) */
+.tape {
+  position: absolute;
+  width: 5.4rem;
+  height: 1.55rem;
+  background: var(--tape);
+  box-shadow: var(--shadow-tape);
+  clip-path: polygon(
+    2% 8%,
+    6% 0,
+    12% 6%,
+    20% 0,
+    30% 5%,
+    40% 0,
+    52% 6%,
+    63% 0,
+    74% 5%,
+    86% 0,
+    94% 6%,
+    100% 2%,
+    98% 92%,
+    92% 100%,
+    82% 94%,
+    70% 100%,
+    58% 95%,
+    46% 100%,
+    34% 94%,
+    22% 100%,
+    12% 95%,
+    4% 100%,
+    0 90%
+  );
+}
+
+/* Handwritten "draft" tag for placeholder content */
+.draft-tag {
+  display: inline-block;
+  font-family: var(--font-hand), cursive;
+  font-weight: 700;
+  font-size: var(--hand-tag);
+  line-height: 1;
+  color: var(--bad);
+  rotate: -4deg;
+  white-space: nowrap;
+}
+
+.dash-list > li,
+.prose ul > li {
+  position: relative;
+  padding-inline-start: 1.5rem;
+  text-wrap: pretty;
+}
+
+.dash-list > li::before,
+.prose ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(0.5lh - 1.25px);
+  width: 0.8rem;
+  height: 2.5px;
+  border-radius: 2px;
+  background: var(--accent);
+  rotate: -6deg;
+}
+
+/* Ink strokes drawn at build time (src/lib/sketch.ts) */
+.ink {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.ink--marker {
+  stroke: var(--marker);
+}
+
+/* Entrances only exist when motion is on; content is visible by default. */
+.ink-draw {
+  vector-effect: none;
+}
+
+html.motion [data-ink] .ink-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.75s var(--ease-ink) var(--d, 0s);
+}
+
+html.motion [data-ink].is-in .ink-draw {
+  stroke-dashoffset: 0;
+}
+
+html.motion [data-ink] .hand-write {
+  clip-path: inset(-30% 100% -30% -10%);
+  transition: clip-path 0.8s var(--ease-ink) var(--d, 0s);
+}
+
+html.motion [data-ink].is-in .hand-write {
+  clip-path: inset(-30% -10% -30% -10%);
+}
+
+/* ==========================================================================
+   Cross-document page turn (progressive enhancement)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.6s;
+    animation-timing-function: var(--ease-out);
+  }
+
+  ::view-transition-old(root) {
+    animation: 0.35s var(--ease-ink) both page-out;
+    transform-origin: 50% 0;
+  }
+
+  ::view-transition-new(root) {
+    animation: 0.35s var(--ease-out) both page-in;
+  }
+}
+
+@keyframes page-out {
+  to {
+    translate: 0 -6%;
+    rotate: -1deg;
+    opacity: 0;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  body::before,
+  body::after,
+  .site-header {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Page transitions: the project card becomes the case study
+   ========================================================================== */
+
+.site-header {
+  view-transition-name: site-header;
+}
