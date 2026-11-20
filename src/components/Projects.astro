@@ -1,0 +1,196 @@
+---
+import ProjectCarousel from './projects/ProjectCarousel.astro';
+import ScrollHint from './ScrollHint.astro';
+import { getProjects } from '@/lib/projects';
+import type { Dictionary } from '@/i18n';
+import type { Lang } from '@/data/site';
+
+interface Props {
+  lang: Lang;
+  t: Dictionary;
+}
+
+const { lang, t } = Astro.props;
+const projects = await getProjects(lang);
+
+/* The taped code card that grows into the section. Brand syntax colours. */
+const code = [
+  '<span class="k">const</span> projects = <span class="k">await</span> notebook',
+  '  .<span class="f">pages</span>({ shipped: <span class="k">true</span> })',
+  '  .<span class="f">with</span>(<span class="s">"details"</span>);',
+].join('\n');
+---
+
+<section id="projects" data-page="3" data-topic={t.header.topics.projects}>
+  <div class="scene proj" data-scene="projects" style="--len: 250">
+    <div class="stage">
+      <div class="proj__intro wrap">
+        <h2 class="display h2">{t.projects.title}</h2>
+        <p class="lead">{t.projects.lead}</p>
+      </div>
+
+      <ScrollHint text={t.projects.hint} seed="projects-hint" />
+
+      <div class="proj__window" data-tone="code">
+        <pre class="proj__code mono" aria-hidden="true"><code set:html={code} /></pre>
+        <div class="proj__intro proj__intro--inside wrap" aria-hidden="true">
+          <p class="display h2">{t.projects.title}</p>
+          <p class="lead">{t.projects.lead}</p>
+        </div>
+      </div>
+      <span class="tape proj__tape proj__tape--a" aria-hidden="true"></span>
+      <span class="tape proj__tape proj__tape--b" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <div class="proj-list" data-tone="code">
+    <ProjectCarousel lang={lang} t={t} projects={projects} />
+  </div>
+</section>
+
+<style>
+  /* ---------- Static ---------- */
+  .proj .stage {
+    padding-top: var(--section-gap);
+  }
+
+  .proj__intro {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .proj__intro .lead {
+    max-width: 34rem;
+  }
+
+  .proj__intro--inside,
+  .proj__tape {
+    display: none;
+  }
+
+  .proj__window {
+    margin-top: 3rem;
+  }
+
+  .proj__code {
+    margin: 0;
+    padding: clamp(1.5rem, 4vw, 2.5rem) var(--edge);
+    color: var(--code-text);
+    font-size: clamp(0.8rem, 2.6vw, 1.05rem);
+    line-height: 1.75;
+    white-space: pre-wrap;
+  }
+
+  .proj__code :global(.k) {
+    color: var(--syn-keyword);
+  }
+
+  .proj__code :global(.f) {
+    color: var(--syn-fn);
+  }
+
+  .proj__code :global(.s) {
+    color: var(--syn-string);
+  }
+
+  .proj-list {
+    padding-block: var(--block-gap) var(--section-gap);
+  }
+
+  /* ---------- Motion: the taped card grows until it is the page ---------- */
+  :global(html.motion) .proj {
+    --g: clamp(0, calc((var(--p, 0) - 0.1) / 0.6), 1);
+    /* Card rectangle, in % of the stage */
+    --cl: 50;
+    --ct: 22;
+    --cw: 42;
+    --ch: 30;
+  }
+
+  :global(html.motion) .proj .stage {
+    padding-top: 0;
+  }
+
+  :global(html.motion) .proj__intro {
+    position: absolute;
+    inset: auto 0 clamp(2.5rem, 9svh, 5.5rem) 0;
+  }
+
+  :global(html.motion) .proj__intro--inside {
+    display: grid;
+    color: var(--code-text);
+  }
+
+  :global(html.motion) .proj :global(.scroll-hint) {
+    position: absolute;
+    left: calc(var(--cl) * 1%);
+    top: calc((var(--ct) + var(--ch)) * 1% + 1.25rem);
+    opacity: calc(1 - var(--g) * 6);
+  }
+
+  :global(html.motion) .proj__window {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    clip-path: inset(
+      calc((1 - var(--g)) * var(--ct) * 1%) calc((1 - var(--g)) * (100 - var(--cl) - var(--cw)) * 1%)
+        calc((1 - var(--g)) * (100 - var(--ct) - var(--ch)) * 1%) calc((1 - var(--g)) * var(--cl) * 1%) round
+        calc((1 - var(--g)) * 12px)
+    );
+  }
+
+  /* At night the card is one step deeper than the paper: an edge keeps it an object */
+  :global(html.motion[data-theme='dark']) .proj__window::after {
+    content: '';
+    position: absolute;
+    inset: calc((1 - var(--g)) * var(--ct) * 1%) calc((1 - var(--g)) * (100 - var(--cl) - var(--cw)) * 1%)
+      calc((1 - var(--g)) * (100 - var(--ct) - var(--ch)) * 1%) calc((1 - var(--g)) * var(--cl) * 1%);
+    border: 1.5px solid rgb(157 189 255 / 0.34);
+    border-radius: calc((1 - var(--g)) * 12px);
+    opacity: calc(1 - clamp(0, calc((var(--g) - 0.85) / 0.15), 1));
+    pointer-events: none;
+  }
+
+  :global(html.motion) .proj__code {
+    position: absolute;
+    left: calc(var(--cl) * 1%);
+    top: calc(var(--ct) * 1%);
+    width: calc(var(--cw) * 1%);
+    height: calc(var(--ch) * 1%);
+    display: grid;
+    align-content: center;
+    padding: 1rem clamp(1rem, 2.6vw, 2.25rem);
+    font-size: clamp(0.72rem, 1.28vw, 1.1rem);
+    white-space: pre;
+    opacity: calc(1 - clamp(0, calc((var(--g) - 0.4) / 0.35), 1));
+  }
+
+  :global(html.motion) .proj__tape {
+    display: block;
+    top: calc(var(--ct) * 1% - 0.8rem);
+    opacity: calc(1 - var(--g) * 9);
+  }
+
+  :global(html.motion) .proj__tape--a {
+    left: calc(var(--cl) * 1% + 1.25rem);
+    rotate: -8deg;
+  }
+
+  :global(html.motion) .proj__tape--b {
+    left: calc((var(--cl) + var(--cw)) * 1% - 6.65rem);
+    rotate: 7deg;
+  }
+
+  @media (max-width: 52rem) {
+    :global(html.motion) .proj {
+      --cl: 7;
+      --ct: 17;
+      --cw: 86;
+      --ch: 27;
+    }
+
+    :global(html.motion) .proj__code {
+      font-size: clamp(0.7rem, 3.15vw, 1rem);
+    }
+  }
+</style>

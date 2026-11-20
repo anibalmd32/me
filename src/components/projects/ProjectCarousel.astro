@@ -1,0 +1,349 @@
+---
+import Icon from '../Icon.astro';
+import ProjectSlide from './ProjectSlide.astro';
+import type { Project } from '@/lib/projects';
+import type { Dictionary } from '@/i18n';
+import type { Lang } from '@/data/site';
+
+interface Props {
+  lang: Lang;
+  t: Dictionary;
+  projects: Project[];
+}
+
+const { lang, t, projects } = Astro.props;
+const total = projects.length;
+---
+
+<div
+  class="carousel"
+  role="region"
+  aria-roledescription="carousel"
+  aria-label={t.projects.carousel}
+  data-carousel
+  data-slide-label={t.projects.slide}
+>
+  <ul class="carousel__track" data-carousel-track>
+    {projects.map((project, index) => <ProjectSlide lang={lang} t={t} project={project} index={index} total={total} />)}
+  </ul>
+
+  <div class="carousel__controls wrap" data-carousel-controls hidden>
+    <button class="carousel__step" type="button" aria-label={t.projects.prev} data-carousel-prev>
+      <Icon name="arrow-left" />
+    </button>
+    <p class="carousel__count" aria-hidden="true">
+      <span data-carousel-current>1</span> / {total}
+    </p>
+    <button class="carousel__step" type="button" aria-label={t.projects.next} data-carousel-next>
+      <Icon name="arrow-right" />
+    </button>
+    <p class="sr-only" aria-live="polite" data-carousel-status></p>
+  </div>
+</div>
+
+<script>
+  import { initCarousels } from '@/scripts/carousel';
+  initCarousels();
+</script>
+
+<style>
+  .carousel {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .carousel__track {
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(82vw, 40rem);
+    gap: clamp(1rem, 3vw, 2rem);
+    margin: 0;
+    padding: 0.5rem var(--edge) 1.5rem;
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--edge);
+    scrollbar-color: var(--code-soft) transparent;
+  }
+
+  .carousel__track > :global(.slide) {
+    scroll-snap-align: start;
+  }
+
+  .carousel__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .carousel__controls[hidden] {
+    display: none;
+  }
+
+  .carousel__step {
+    display: inline-grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid var(--rule);
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--fg);
+    cursor: pointer;
+    transition:
+      background-color var(--state),
+      color var(--state);
+  }
+
+  .carousel__step:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  .carousel__step :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .carousel__count {
+    min-width: 4.5ch;
+    margin: 0;
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: var(--hand-note);
+    line-height: 1;
+    text-align: center;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .carousel.is-3d {
+    --cw: min(64vw, 58rem, calc((100svh - 24rem) * 16 / 9));
+    --r: calc(var(--cw) * 1.25);
+    --step: 40deg;
+    --pull: 5rem;
+    --lean: 3deg;
+    isolation: isolate;
+    overflow: clip;
+    touch-action: pan-y;
+  }
+
+  .carousel.is-3d .carousel__track {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    justify-items: center;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .carousel.is-3d.is-dragging .carousel__track {
+    cursor: grabbing;
+  }
+
+  .carousel.is-3d :global(.slide) {
+    grid-area: 1 / 1;
+    width: 100%;
+    justify-items: center;
+    perspective: 1700px;
+    pointer-events: none;
+    z-index: var(--z, 0);
+    --ring: translateZ(calc(var(--r) * -1 - var(--lift, 0) * var(--pull))) rotateY(calc(var(--d, 0) * var(--step)))
+      translateZ(var(--r)) rotateY(calc(var(--sway, 0) * var(--lean)));
+  }
+
+  .carousel.is-3d :global(.slide__frame) {
+    width: var(--cw);
+    pointer-events: auto;
+    transform: var(--ring);
+    will-change: transform;
+    filter: brightness(calc(1 - min(var(--ad, 0), 1) * 0.45));
+    opacity: calc(1 - clamp(0, (var(--ad, 0) - 1.25) * 4, 1));
+    -webkit-user-drag: none;
+  }
+
+  .carousel.is-3d :global(.slide__frame video),
+  .carousel.is-3d :global(.slide__frame img) {
+    pointer-events: none;
+  }
+
+  .carousel.is-3d :global(.slide:not(.is-active) .slide__frame),
+  .carousel.is-3d :global(.slide:not(.is-active) .slide__title a) {
+    view-transition-name: none;
+  }
+
+  .carousel.is-3d :global(.slide__caption) {
+    width: min(100% - var(--gutter) * 2, 46rem);
+    clip-path: inset(-1rem 100% -1rem -1rem);
+    visibility: hidden;
+    transition:
+      clip-path 0.2s var(--ease-ink),
+      visibility 0s 0.2s;
+  }
+
+  .carousel.is-3d :global(.slide.is-active .slide__caption) {
+    clip-path: inset(-1rem -1rem -1rem -1rem);
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      clip-path 0.7s 0.1s var(--ease-ink),
+      visibility 0s;
+  }
+
+  @media (max-width: 52rem) {
+    .carousel.is-3d {
+      --cw: min(80vw, calc((100svh - 27rem) * 16 / 9));
+      --r: calc(var(--cw) * 1.1);
+      --step: 42deg;
+    }
+  }
+
+  @media (min-width: 52.01rem) {
+    .carousel.is-3d .carousel__controls {
+      position: absolute;
+      top: calc(var(--cw) * 9 / 32);
+      left: 0;
+      right: 0;
+      z-index: 200;
+      width: auto;
+      justify-content: space-between;
+      padding-inline: var(--edge);
+      translate: 0 -50%;
+      pointer-events: none;
+    }
+
+    .carousel.is-3d .carousel__step {
+      background: var(--bg);
+      pointer-events: auto;
+    }
+
+    .carousel.is-3d .carousel__step:hover {
+      background: var(--fg);
+    }
+
+    .carousel.is-3d .carousel__count {
+      display: none;
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .carousel.is-3d {
+      --cw: min(calc(100vw - var(--edge) * 2 - 8rem), 70rem);
+      --r: calc(var(--cw) * 1.2);
+      --step: 34deg;
+    }
+
+    .carousel.is-3d .carousel__controls {
+      top: 50%;
+    }
+
+    .carousel.is-3d :global(.slide) {
+      align-content: stretch;
+    }
+
+    .carousel.is-3d :global(.slide__card) {
+      display: grid;
+      height: 100%;
+      grid-template-columns: minmax(17rem, 4fr) minmax(0, 8fr);
+      grid-template-areas: 'info media';
+      width: var(--cw);
+      overflow: hidden;
+      border: 1px solid var(--code-line);
+      border-radius: var(--radius-card);
+      background: color-mix(in srgb, var(--code-bg) 86%, var(--code-text));
+      box-shadow: 0 1.5rem 3rem -1rem rgb(0 0 0 / 0.55);
+      pointer-events: auto;
+      transform: var(--ring);
+      will-change: transform;
+      filter: brightness(calc(1 - min(var(--ad, 0), 1) * 0.45));
+      opacity: calc(1 - clamp(0, (var(--ad, 0) - 1.25) * 4, 1));
+    }
+
+    .carousel.is-3d :global(.slide__frame) {
+      grid-area: media;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 0.75rem 0.75rem 0.75rem 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+      will-change: auto;
+      filter: none;
+      opacity: 1;
+    }
+
+    .carousel.is-3d :global(.slide__frame .media) {
+      height: auto;
+      max-height: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 8px;
+    }
+
+    .carousel.is-3d :global(.slide__caption),
+    .carousel.is-3d :global(.slide.is-active .slide__caption) {
+      grid-area: info;
+      width: auto;
+      align-content: center;
+      justify-items: start;
+      gap: 1rem;
+      padding: clamp(1.5rem, 2.2vw, 2.25rem);
+      text-align: start;
+      clip-path: none;
+      visibility: visible;
+      transition: none;
+    }
+
+    .carousel.is-3d :global(.slide__title) {
+      justify-content: flex-start;
+      font-size: clamp(2rem, 3vw, 2.75rem);
+    }
+
+    .carousel.is-3d :global(.slide__summary) {
+      font-size: 1rem;
+    }
+
+    .carousel.is-3d :global(.slide__caption .stack-line) {
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .carousel.is-3d :global(.slide__frame .media) {
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .carousel.is-3d :global(.slide__frame .media__title) {
+      display: none;
+    }
+
+    .carousel.is-3d :global(.slide__caption .links--row) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      width: min(100%, 17rem);
+      margin-top: 0.5rem;
+    }
+
+    .carousel.is-3d :global(.slide__caption .links--row .btn) {
+      width: 100%;
+    }
+
+    .carousel.is-3d :global(.slide__caption .links--row .btn svg:last-child),
+    .carousel.is-3d :global(.slide__caption .links--row .btn__soon) {
+      margin-inline-start: auto;
+    }
+  }
+</style>

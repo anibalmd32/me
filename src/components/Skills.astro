@@ -1,0 +1,97 @@
+---
+import SkillsList from './skills/SkillsList.astro';
+import WhereChart from './skills/WhereChart.astro';
+import { sketchUnderline } from '@/lib/sketch';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const underline = sketchUnderline(300, 'skills-title', 10);
+---
+
+<div class="flow skills wrap" data-skills>
+  <div class="skills__head">
+    <h2 class="skills__title display h2" data-ink>
+      {t.skills.title}
+      <svg class="skills__underline" viewBox="0 0 310 30" preserveAspectRatio="none" aria-hidden="true">
+        <path class="ink ink-draw" pathLength="1" d={underline}></path>
+      </svg>
+    </h2>
+    <p class="skills__hint hand">{t.skills.hint}</p>
+  </div>
+
+  <div class="skills__layout">
+    <SkillsList t={t} />
+    <WhereChart t={t} />
+  </div>
+
+  <p class="sr-only" aria-live="polite" data-skills-status></p>
+</div>
+
+<script>
+  import { initSkillsMaps } from '@/scripts/skills';
+  initSkillsMaps();
+</script>
+
+<style>
+  .skills {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .skills__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 1rem clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .skills__title {
+    position: relative;
+    padding-bottom: 0.25em;
+  }
+
+  .skills__underline {
+    position: absolute;
+    inset: auto 0 -0.05em 0;
+    width: 100%;
+    height: 0.34em;
+    color: var(--blue);
+    overflow: visible;
+  }
+
+  .skills__underline .ink {
+    stroke-width: 5;
+  }
+
+  .skills__hint {
+    padding-bottom: 0.3em;
+  }
+
+  .skills__layout {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 3.5rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skills__layout > :global(.where) {
+    order: -1;
+  }
+
+  @media (min-width: 64rem) {
+    .skills__layout {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      align-items: start;
+      gap: clamp(2.5rem, 4.5vw, 4.5rem);
+    }
+
+    .skills__layout > :global(.where) {
+      order: 0;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

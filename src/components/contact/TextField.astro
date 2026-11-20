@@ -1,0 +1,91 @@
+---
+interface Props {
+  id: string;
+  name: string;
+  label: string;
+  error: string;
+  type?: 'text' | 'email';
+  autocomplete: string;
+}
+
+const { id, name, label, error, type = 'text', autocomplete } = Astro.props;
+const errorId = `e-${name}`;
+const isEmail = type === 'email';
+---
+
+<div class="field">
+  <label for={id}>{label}</label>
+  <input
+    id={id}
+    name={name}
+    type={type}
+    autocomplete={autocomplete}
+    inputmode={isEmail ? 'email' : undefined}
+    spellcheck={isEmail ? 'false' : undefined}
+    minlength={isEmail ? undefined : 2}
+    required
+    aria-describedby={errorId}
+  />
+  <div class="field__slot">
+    <p class="field__error" id={errorId} data-error-for={name} hidden>{error}</p>
+  </div>
+</div>
+
+<style>
+  .field {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  label {
+    font-weight: 700;
+    font-size: var(--text-small);
+  }
+
+  input {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-bottom: 1.5px solid var(--field-line);
+    border-radius: var(--radius-control) var(--radius-control) 0 0;
+    background: var(--field);
+    color: var(--ink);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    transition:
+      border-color var(--state),
+      box-shadow var(--state);
+  }
+
+  input:hover {
+    border-bottom-color: var(--blue);
+  }
+
+  input:focus-visible {
+    outline: none;
+    border-bottom-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-wash);
+  }
+
+  input[aria-invalid='true'],
+  input[aria-invalid='true']:hover {
+    border-bottom-color: var(--bad);
+  }
+
+  input[aria-invalid='true']:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent);
+  }
+
+  .field__slot {
+    min-height: 2.7rem;
+  }
+
+  .field__error {
+    color: var(--bad);
+    font-weight: 600;
+    font-size: var(--text-small);
+    line-height: 1.35;
+  }
+</style>

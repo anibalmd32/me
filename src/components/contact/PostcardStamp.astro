@@ -1,0 +1,149 @@
+---
+import { perforatedRect } from '@/lib/stamp';
+
+interface Props {
+  connected: boolean;
+  soonLabel: string;
+  postmarkLabel: string;
+  site: string;
+}
+
+const { connected, soonLabel, postmarkLabel, site } = Astro.props;
+const STAMP_WIDTH = 84;
+const STAMP_HEIGHT = 104;
+const outline = perforatedRect(STAMP_WIDTH, STAMP_HEIGHT);
+const ring = 'M 60 60 m -44 0 a 44 44 0 1 1 88 0 a 44 44 0 1 1 -88 0';
+const waves = [36, 50, 64, 78].map((y) => `M 112 ${y} q 10.5 -8 21 0 t 21 0 t 21 0 t 21 0`);
+---
+
+<div class="stamp" aria-hidden="true">
+  {
+    connected ? (
+      <svg class="stamp__paper" viewBox={`0 0 ${STAMP_WIDTH} ${STAMP_HEIGHT}`}>
+        <path class="stamp__fill" d={outline} />
+        <rect class="stamp__frame" x="9" y="9" width={STAMP_WIDTH - 18} height={STAMP_HEIGHT - 18} rx="2" />
+        <text class="stamp__mark" x={STAMP_WIDTH / 2} y={STAMP_HEIGHT / 2 + 8} text-anchor="middle">
+          &lt;/&gt;
+        </text>
+      </svg>
+    ) : (
+      <span class="stamp__slot">
+        <span class="stamp__soon">{soonLabel}</span>
+      </span>
+    )
+  }
+
+  <svg class="postmark" viewBox="0 0 200 120">
+    <defs>
+      <path id="postmark-ring" d={ring}></path>
+    </defs>
+    <circle class="postmark__line" cx="60" cy="60" r="55"></circle>
+    <circle class="postmark__line" cx="60" cy="60" r="34"></circle>
+    <text class="postmark__around">
+      <textPath href="#postmark-ring" startOffset="2%">{postmarkLabel} · {site} ·</textPath>
+    </text>
+    <text class="postmark__date" x="60" y="64" text-anchor="middle" data-postmark-date></text>
+    {waves.map((wave) => <path class="postmark__line" d={wave} />)}
+  </svg>
+</div>
+
+<style>
+  .stamp {
+    position: relative;
+    flex: none;
+    width: 5.25rem;
+    aspect-ratio: 84 / 104;
+  }
+
+  .stamp__paper {
+    display: block;
+    width: 100%;
+    height: 100%;
+    rotate: 2deg;
+    filter: drop-shadow(0 2px 3px rgb(var(--shadow) / 0.18));
+  }
+
+  .stamp__fill {
+    fill: var(--c-blue);
+  }
+
+  .stamp__frame {
+    fill: none;
+    stroke: var(--c-paper);
+    stroke-width: 1.2;
+    opacity: 0.7;
+  }
+
+  .stamp__mark {
+    fill: var(--c-paper);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  .stamp__slot {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border: 2px dashed var(--fg-soft);
+    border-radius: var(--radius-control);
+  }
+
+  .stamp__soon {
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: var(--hand-tag);
+    line-height: 1;
+    color: var(--fg-soft);
+    rotate: -8deg;
+  }
+
+  .postmark {
+    position: absolute;
+    top: 50%;
+    right: -0.75rem;
+    width: 12.5rem;
+    max-width: none;
+    translate: 0 -50%;
+    rotate: -20deg;
+    scale: 1.5;
+    opacity: 0;
+    overflow: visible;
+    pointer-events: none;
+    transition:
+      opacity 0.08s linear,
+      scale 0.38s var(--ease-snap),
+      rotate 0.38s var(--ease-snap);
+  }
+
+  :global(.is-posted) .postmark {
+    rotate: -11deg;
+    scale: 1;
+    opacity: 0.86;
+  }
+
+  .postmark__line {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+
+  .postmark__around,
+  .postmark__date {
+    fill: var(--ink);
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .postmark__around {
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+  }
+
+  .postmark__date {
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+  }
+</style>

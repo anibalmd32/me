@@ -1,0 +1,194 @@
+---
+import ProjectMedia from '../projects/ProjectMedia.astro';
+import LinksTile from './LinksTile.astro';
+import ShotTile from './ShotTile.astro';
+import FactsTile from './FactsTile.astro';
+import StackTile from './StackTile.astro';
+import SheetTile from './SheetTile.astro';
+import ChallengesTile from './ChallengesTile.astro';
+import { projectSlug, type Project } from '@/lib/projects';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+  project: Project;
+}
+
+const { t, project } = Astro.props;
+const { title, role, year, stack, repo, demo, video, cover, coverAlt, brief, challenges, highlight } = project.data;
+const slug = projectSlug(project);
+const shot = highlight ?? (video && cover ? { src: cover, alt: coverAlt ?? title, caption: undefined } : undefined);
+---
+
+<div class="bento">
+  <div class="bento__main">
+    <div class="tile tile--media" style={`view-transition-name: project-media-${slug}`}>
+      <ProjectMedia project={project} sizes="(min-width: 64rem) 52rem, calc(100vw - 2.5rem)" eager controls />
+    </div>
+    {
+      brief && (
+        <>
+          <div class="tile tile--why">
+            <SheetTile heading={t.caseStudy.why}>
+              <p>{brief.why}</p>
+            </SheetTile>
+          </div>
+          <div class="tile tile--how">
+            <SheetTile heading={t.caseStudy.how}>
+              <p>{brief.how}</p>
+            </SheetTile>
+          </div>
+        </>
+      )
+    }
+    {
+      challenges.length > 0 && (
+        <div class="tile tile--challenges">
+          <ChallengesTile heading={t.caseStudy.challenges} challenges={challenges} />
+        </div>
+      )
+    }
+  </div>
+
+  <div class="bento__side">
+    <div class="tile tile--links">
+      <LinksTile t={t} repo={repo} demo={demo} />
+    </div>
+    {
+      shot && (
+        <div class="tile tile--shot">
+          <ShotTile src={shot.src} alt={shot.alt} caption={shot.caption} sizes="(min-width: 64rem) 26rem, calc(100vw - 2.5rem)" />
+        </div>
+      )
+    }
+    <div class="tile tile--facts">
+      <FactsTile t={t} role={role} year={year} />
+    </div>
+    <div class="tile tile--stack">
+      <StackTile t={t} stack={stack} />
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initLoopVideos } from '@/scripts/loop-videos';
+  initLoopVideos();
+</script>
+
+<style>
+  .bento {
+    --gap: clamp(1rem, 2vw, 1.5rem);
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bento__main,
+  .bento__side {
+    display: contents;
+  }
+
+  .tile {
+    min-width: 0;
+  }
+
+  .tile--media {
+    order: 1;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+    border-radius: var(--radius-card);
+    background: var(--code-bg);
+  }
+
+  .tile--links {
+    order: 2;
+  }
+
+  .tile--facts {
+    order: 3;
+  }
+
+  .tile--why {
+    order: 4;
+  }
+
+  .tile--how {
+    order: 5;
+  }
+
+  .tile--shot {
+    order: 6;
+    aspect-ratio: 4 / 3;
+  }
+
+  .tile--challenges {
+    order: 7;
+  }
+
+  .tile--stack {
+    order: 8;
+  }
+
+  @media (min-width: 40rem) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tile--media,
+    .tile--challenges {
+      grid-column: span 2;
+    }
+
+    .tile--shot {
+      order: 7;
+      aspect-ratio: auto;
+      min-height: 16rem;
+    }
+
+    .tile--stack {
+      order: 8;
+    }
+
+    .tile--challenges {
+      order: 9;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .bento {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .bento__main {
+      grid-column: span 8;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+      gap: var(--gap);
+    }
+
+    .bento__side {
+      grid-column: span 4;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+    }
+
+    .tile,
+    .tile--shot,
+    .tile--stack,
+    .tile--challenges {
+      order: 0;
+    }
+
+    .tile--shot {
+      flex: 1 1 11rem;
+      min-height: 11rem;
+    }
+
+    .bento__side:not(:has(.tile--shot)) .tile--stack {
+      flex: 1 1 auto;
+    }
+  }
+</style>

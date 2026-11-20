@@ -1,0 +1,37 @@
+---
+interface Props {
+  heading: string;
+}
+
+const { heading } = Astro.props;
+---
+
+<section class="sheet">
+  <h2 class="sheet__heading h4">{heading}</h2>
+  <slot />
+</section>
+
+<style>
+  .sheet {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    height: 100%;
+    padding: clamp(1.4rem, 2.6vw, 2rem);
+    border: 1px solid var(--sheet-line);
+    border-radius: var(--radius-card);
+    background: var(--sheet);
+  }
+
+  .sheet__heading {
+    margin: 0;
+  }
+
+  .sheet :global(p) {
+    margin: 0;
+    max-width: 62ch;
+    font-size: clamp(1.0625rem, 1.25vw, 1.2rem);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+</style>

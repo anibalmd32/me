@@ -1,0 +1,61 @@
+---
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+  stack: string[];
+}
+
+const { t, stack } = Astro.props;
+const escapeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const items = stack
+  .map((name) => `<span class="stack__item"><span class="s">'${escapeHtml(name)}'</span><span class="stack__comma">, </span></span>`)
+  .join('');
+const code = `<span class="k">const</span> stack = [${items}];`;
+---
+
+<div class="stack" data-tone="code" data-card>
+  <p class="sr-only">{t.caseStudy.stack}: {stack.join(', ')}</p>
+  <pre class="stack__code mono" aria-hidden="true"><code set:html={code} /></pre>
+</div>
+
+<style>
+  .stack {
+    display: grid;
+    align-content: center;
+    height: 100%;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-radius: var(--radius-card);
+  }
+
+  .stack__code {
+    margin: 0;
+    font-size: clamp(0.85rem, 1.1vw, 0.98rem);
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: var(--code-text);
+  }
+
+  .stack__code :global(.k) {
+    color: var(--syn-keyword);
+  }
+
+  .stack__code :global(.s) {
+    color: var(--syn-string);
+  }
+
+  .stack__code :global(.stack__item:last-of-type .stack__comma) {
+    display: none;
+  }
+
+  @media (min-width: 40rem) {
+    .stack__code :global(.stack__item) {
+      display: block;
+      padding-inline-start: 2ch;
+    }
+
+    .stack__code :global(.stack__item:last-of-type .stack__comma) {
+      display: inline;
+    }
+  }
+</style>

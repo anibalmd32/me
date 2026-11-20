@@ -1,0 +1,179 @@
+---
+import ExperiencePage from './ExperiencePage.astro';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const e = t.experience;
+const total = e.stops.length;
+---
+
+<div class="scene exp" data-scene="experience" data-tone="desk" style={`--len: ${150 + total * 85}; --pages: ${total}`}>
+  <div class="stage">
+    <div class="exp__intro wrap">
+      <h2 class="display h2">{e.title}</h2>
+      <p class="hand">{e.range}</p>
+    </div>
+
+    <ol class="exp__pages">
+      {
+        e.stops.map((stop, index) => (
+          <li class="exp__page" style={`--i: ${index}`} data-exp-page>
+            <div class="exp__sheet">
+              <ExperiencePage stop={stop} role={stop.role || e.role} remote={e.remote} next={index === total - 1 ? e.next : undefined} />
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</div>
+
+<style>
+  .exp {
+    --desk: clamp(0.5rem, 1.4vw, 1.25rem);
+    box-shadow: inset 0 1rem 1.25rem -1rem rgb(var(--shadow) / 0.3);
+  }
+
+  .exp .stage {
+    padding-block: var(--section-gap);
+  }
+
+  .exp__intro {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+  }
+
+  .exp__pages {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    width: min(100% - var(--gutter) * 2, var(--max));
+    margin: 3rem auto 0;
+  }
+
+  .exp__sheet {
+    --line-x: clamp(0.9rem, 2.2vw, 1.75rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    padding-inline-start: calc(var(--line-x) + clamp(0.9rem, 2vw, 1.5rem));
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(
+        90deg,
+        transparent calc(var(--line-x) - 1px),
+        var(--margin-line) calc(var(--line-x) - 1px),
+        var(--margin-line) calc(var(--line-x) + 1px),
+        transparent calc(var(--line-x) + 1px)
+      ),
+      var(--grid-layers);
+    background-size:
+      100% 100%,
+      var(--grid-sizes);
+    outline: 1px solid color-mix(in srgb, var(--ink) 13%, transparent);
+    box-shadow: var(--shadow-note);
+  }
+
+  :global(html.motion) .exp {
+    --zoom: 0;
+    --turned: 0;
+    --small: 0.5;
+    --origin: 80% 70%;
+    --edge-step: 6px;
+  }
+
+  :global(html.motion) .exp .stage {
+    padding: 0;
+  }
+
+  :global(html.motion) .exp__intro {
+    position: absolute;
+    inset: calc(var(--header-h) + 5svh) 0 auto 0;
+  }
+
+  :global(html.motion) .exp__pages {
+    position: absolute;
+    inset: calc(var(--header-h) + var(--desk)) var(--desk) var(--desk);
+    display: block;
+    width: auto;
+    margin: 0;
+    transform-origin: var(--origin);
+    transform: scale(calc(var(--small) + var(--zoom) * (1 - var(--small))));
+  }
+
+  :global(html.motion) .exp__page {
+    --lift: clamp(0, calc(var(--turned) - var(--i)), 1);
+    --uncovered: clamp(0, calc(var(--turned) - var(--i) + 1), 1);
+    --loose: calc(1 - var(--zoom));
+    --askew: calc(var(--loose) + (1 - var(--uncovered)) * var(--zoom) * 0.07);
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--pages) - var(--i));
+    translate: calc(var(--loose) * var(--dx, 0%)) calc(var(--loose) * var(--dy, 0%));
+    rotate: calc(var(--askew) * var(--tilt, 0deg));
+  }
+
+  .exp__page:nth-child(4n + 1) {
+    --tilt: -2deg;
+  }
+
+  .exp__page:nth-child(4n + 2) {
+    --tilt: 3deg;
+    --dx: 2.5%;
+    --dy: 1.5%;
+  }
+
+  .exp__page:nth-child(4n + 3) {
+    --tilt: -5deg;
+    --dx: -2%;
+    --dy: 2.5%;
+  }
+
+  .exp__page:nth-child(4n + 4) {
+    --tilt: 6.5deg;
+    --dx: 1%;
+    --dy: 4%;
+  }
+
+  :global(html.motion) .exp__sheet {
+    --line-x: max(calc(var(--margin-x) - var(--desk)), 0.45rem);
+    --in-the-air: calc(clamp(0, calc(var(--lift) * 14), 1) * clamp(0, calc((1 - var(--lift)) * 14), 1));
+    position: absolute;
+    inset: 0 0 calc((var(--pages) - 1 - var(--i)) * var(--edge-step) * var(--zoom)) 0;
+    padding: 0;
+    box-shadow: 0 48px 60px rgb(60 45 10 / calc(0.28 * var(--in-the-air)));
+    transform-origin: 50% 0;
+    transform: translate3d(0, calc(var(--lift) * -130%), 0) rotate(calc(var(--lift) * -4deg));
+  }
+
+  :global(html.motion) .exp__page:last-child .exp__sheet {
+    box-shadow: var(--shadow-note);
+  }
+
+  :global(html.motion) .exp__sheet::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgb(var(--shadow) / calc(0.13 * (1 - var(--uncovered))));
+  }
+
+  :global(html.motion) .exp__page.is-turning,
+  :global(html.motion) .exp__page.is-turning + .exp__page {
+    will-change: rotate;
+  }
+
+  :global(html.motion) .exp__page.is-turning .exp__sheet {
+    will-change: transform;
+  }
+
+  @media (max-width: 52rem), (orientation: portrait) {
+    :global(html.motion) .exp {
+      --small: 0.56;
+      --origin: 58% 78%;
+      --edge-step: 4px;
+    }
+  }
+</style>

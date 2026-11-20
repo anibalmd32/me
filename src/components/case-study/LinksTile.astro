@@ -1,0 +1,36 @@
+---
+import ProjectLinks from '../ProjectLinks.astro';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+  repo?: string;
+  demo?: string;
+}
+
+const { t, repo, demo } = Astro.props;
+---
+
+<section class="open" data-tone="blue" data-card>
+  <h2 class="open__heading h4">{t.caseStudy.links}</h2>
+  <ProjectLinks t={t} repo={repo} demo={demo} />
+</section>
+
+<style>
+  .open {
+    display: grid;
+    gap: 1.1rem;
+    align-content: start;
+    height: 100%;
+    padding: clamp(1.4rem, 2.6vw, 2rem);
+    border-radius: var(--radius-card);
+  }
+
+  .open__heading {
+    margin: 0;
+  }
+
+  .open :global(.links) {
+    width: 100%;
+  }
+</style>

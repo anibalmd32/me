@@ -1,0 +1,86 @@
+---
+interface Props {
+  legend: string;
+  topics: readonly { value: string; label: string }[];
+}
+
+const { legend, topics } = Astro.props;
+---
+
+<fieldset class="choices">
+  <legend>{legend}</legend>
+  <div class="choices__row">
+    {
+      topics.map((topic, index) => (
+        <label class="choice">
+          <input type="radio" name="topic" value={topic.value} checked={index === 0} />
+          <span>{topic.label}</span>
+        </label>
+      ))
+    }
+  </div>
+</fieldset>
+
+<style>
+  .choices {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  legend {
+    margin-bottom: 0.55rem;
+    padding: 0;
+    font-weight: 700;
+    font-size: var(--text-small);
+  }
+
+  .choices__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .choice {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .choice input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .choice span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.4em 1em;
+    border: 1.5px solid var(--field-line);
+    border-radius: var(--radius-control);
+    background: var(--field);
+    font-weight: 600;
+    transition:
+      background-color var(--state),
+      border-color var(--state),
+      color var(--state);
+  }
+
+  .choice:hover span {
+    border-color: var(--blue);
+  }
+
+  .choice input:checked + span {
+    border-color: var(--btn-bg);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+  }
+
+  .choice input:focus-visible + span {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+</style>

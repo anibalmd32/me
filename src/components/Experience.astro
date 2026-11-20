@@ -1,0 +1,16 @@
+---
+import ExperienceNotebook from './experience/ExperienceNotebook.astro';
+import Certificates from './experience/Certificates.astro';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+---
+
+<section id="experience" data-page="2" data-topic={t.header.topics.experience}>
+  <ExperienceNotebook t={t} />
+  <Certificates t={t} />
+</section>

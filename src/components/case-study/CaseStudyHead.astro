@@ -1,0 +1,105 @@
+---
+import Icon from '../Icon.astro';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+  slug: string;
+  title: string;
+  summary: string;
+  backHref: string;
+  draft: boolean;
+}
+
+const { t, slug, title, summary, backHref, draft } = Astro.props;
+---
+
+<header class="head">
+  <a class="head__back" href={backHref}>
+    <Icon name="arrow-left" />
+    {t.caseStudy.back}
+  </a>
+  <h1 class="display h1 head__title">
+    <span style={`view-transition-name: project-title-${slug}`}>{title}</span>
+  </h1>
+  <p class="lead head__summary">{summary}</p>
+  {
+    draft && (
+      <aside class="head__draft" data-tone="sticky" data-card>
+        <span class="tape" aria-hidden="true" />
+        <p>{t.caseStudy.draft}</p>
+      </aside>
+    )
+  }
+</header>
+
+<style>
+  .head {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .head__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.75rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .head__back:hover {
+    text-decoration: underline;
+  }
+
+  .head__back :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+    transition: translate 0.25s var(--ease-out);
+  }
+
+  .head__back:hover :global(svg) {
+    translate: -4px 0;
+  }
+
+  .head__title {
+    margin: 0;
+  }
+
+  .head__title span {
+    display: inline-block;
+  }
+
+  .head__summary {
+    max-width: 52ch;
+    margin: 0;
+    font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+  }
+
+  .head__draft {
+    position: relative;
+    max-width: 22rem;
+    margin-top: 1rem;
+    padding: 1.8rem 1.5rem 1.3rem;
+    border-bottom-right-radius: 1.2rem;
+    box-shadow: var(--shadow-note);
+    rotate: -1.5deg;
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: var(--hand-note);
+    line-height: 1.1;
+  }
+
+  .head__draft p {
+    margin: 0;
+  }
+
+  .head__draft .tape {
+    top: -0.75rem;
+    left: 50%;
+    translate: -50% 0;
+    rotate: -3deg;
+  }
+</style>

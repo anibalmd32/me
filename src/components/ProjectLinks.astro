@@ -1,0 +1,92 @@
+---
+import Icon from './Icon.astro';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+  repo?: string;
+  demo?: string;
+  /** Case study URL. Omit on the case study page itself. */
+  caseStudy?: string;
+  row?: boolean;
+}
+
+const { t, repo, demo, caseStudy, row = false } = Astro.props;
+const links = [
+  { href: repo, label: t.projects.source, icon: 'code' as const },
+  { href: demo, label: t.projects.demo, icon: 'play' as const },
+];
+---
+
+<ul class:list={['links', row && 'links--row']}>
+  {
+    links.map((link) => (
+      <li>
+        {link.href ? (
+          <a class="btn" href={link.href} target="_blank" rel="noopener">
+            <Icon name={link.icon} />
+            {link.label}
+            <Icon name="external" />
+          </a>
+        ) : (
+          <span class="btn" aria-disabled="true">
+            <Icon name={link.icon} />
+            {link.label}
+            <span class="btn__soon" aria-hidden="true">
+              {t.projects.soon}
+            </span>
+            <span class="sr-only">({t.projects.soonLabel})</span>
+          </span>
+        )}
+      </li>
+    ))
+  }
+  {
+    caseStudy && (
+      <li>
+        <a class="btn btn--primary" href={caseStudy} data-astro-prefetch>
+          <Icon name="file" />
+          {t.projects.caseStudy}
+          <Icon name="arrow-right" />
+        </a>
+      </li>
+    )
+  }
+</ul>
+
+<style>
+  .links {
+    display: grid;
+    gap: 0.6rem;
+    width: min(100%, 17rem);
+  }
+
+  .links .btn {
+    width: 100%;
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+
+  .links .btn :global(svg:last-child),
+  .links .btn__soon {
+    margin-inline-start: auto;
+  }
+
+  @media (min-width: 40rem) {
+    .links--row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: auto;
+    }
+
+    .links--row .btn {
+      width: auto;
+    }
+
+    .links--row .btn :global(svg:last-child),
+    .links--row .btn__soon {
+      margin-inline-start: 0;
+    }
+  }
+</style>

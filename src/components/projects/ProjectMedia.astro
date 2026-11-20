@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import type { Project } from '@/lib/projects';
+
+interface Props {
+  project: Project;
+  sizes: string;
+  eager?: boolean;
+  controls?: boolean;
+}
+
+const { project, sizes, eager = false, controls = false } = Astro.props;
+const { title, video, cover, coverAlt } = project.data;
+const narrated = controls ? video?.narrated : undefined;
+---
+
+{
+  narrated ? (
+    <video
+      class="media media--controls"
+      src={narrated.src}
+      poster={narrated.poster}
+      playsinline
+      controls
+      preload="metadata"
+      aria-label={coverAlt ?? title}
+    />
+  ) : video ? (
+    <video
+      class:list={['media', controls && 'media--controls']}
+      src={video.src}
+      poster={video.poster}
+      muted
+      loop
+      playsinline
+      controls={controls}
+      preload={eager ? 'metadata' : 'none'}
+      aria-label={coverAlt ?? title}
+      data-loop-video
+    />
+  ) : cover ? (
+    <Image
+      class="media"
+      src={cover}
+      alt={coverAlt ?? ''}
+      widths={[480, 720, 960, 1280, 1600]}
+      sizes={sizes}
+      format="webp"
+      quality={82}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+      decoding="async"
+    />
+  ) : (
+    <div class="media media--blank" aria-hidden="true">
+      <span class="media__title display">{title}</span>
+    </div>
+  )
+}
+
+<style>
+  .media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    background: var(--code-bg);
+  }
+
+  video.media {
+    object-position: center;
+  }
+
+  .media--controls {
+    object-fit: contain;
+  }
+
+  .media--blank {
+    display: grid;
+    place-items: center;
+    padding: 8%;
+    background-color: var(--code-bg);
+    background-image: var(--paper-layers);
+    background-size: var(--paper-sizes);
+    color: var(--code-text);
+  }
+
+  .media__title {
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    text-align: center;
+  }
+</style>

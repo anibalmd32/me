@@ -1,0 +1,357 @@
+---
+import Icon from './Icon.astro';
+import { homePath, otherLang, type Dictionary } from '@/i18n';
+import type { Lang } from '@/data/site';
+
+interface Props {
+  lang: Lang;
+  t: Dictionary;
+  /** Handwritten topic of the current page. */
+  topic: string;
+  /** URL of this same page in the other language. */
+  altPath: string;
+  /** True on the home page, where section links are in-page anchors. */
+  home?: boolean;
+}
+
+const { lang, t, topic, altPath, home = false } = Astro.props;
+const base = home ? '' : homePath(lang);
+const other = otherLang(lang);
+
+const links = [
+  { id: 'experience', label: t.header.links.experience },
+  { id: 'projects', label: t.header.links.projects },
+  { id: 'services', label: t.header.links.services },
+  { id: 'products', label: t.header.links.products },
+  { id: 'contact', label: t.header.links.contact },
+];
+---
+
+<a class="skip" href="#main">{t.header.skip}</a>
+
+<header class="site-header" data-header>
+  <div class="bar wrap">
+    <a class="brand" href={home ? '#top' : homePath(lang)} aria-label={t.header.home}>
+      <span class="brand__mark mono" aria-hidden="true">&lt;/&gt;</span>
+      <span class="brand__name">Anibal Mendoza</span>
+    </a>
+    <span class="topic" aria-hidden="true"><span class="topic__text hand" data-topic>{topic}</span></span>
+
+    <nav class="nav" aria-label={t.header.nav}>
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={`${base}#${l.id}`} data-nav={l.id}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <a class="tool tool--lang" href={altPath} hreflang={other} lang={other} aria-label={t.header.lang}>
+        {t.header.langShort}
+      </a>
+      <button class="tool" type="button" data-theme-toggle aria-label={t.header.theme} aria-pressed="false">
+        <Icon name="moon" class="tool__moon" />
+        <Icon name="sun" class="tool__sun" />
+      </button>
+      <button class="tool tool--index" type="button" popovertarget="index" aria-label={t.header.openIndex}>
+        <Icon name="index" />
+      </button>
+    </div>
+  </div>
+  <div class="rule wrap" aria-hidden="true"><span class="rule__ink" data-progress></span></div>
+</header>
+
+<div id="index" popover class="index" data-index>
+  <div class="index__head">
+    <p class="display h2">{t.header.index}</p>
+    <button class="tool" type="button" popovertarget="index" popovertargetaction="hide" aria-label={t.header.closeIndex}>
+      <Icon name="close" />
+    </button>
+  </div>
+  <nav aria-label={t.header.nav}>
+    <ol class="index__list">
+      {
+        links.map((l) => (
+          <li>
+            <a href={`${base}#${l.id}`}>{l.label}</a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+  <a class="index__lang" href={altPath} hreflang={other} lang={other}>{t.header.lang}</a>
+</div>
+
+<style>
+  .skip {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 90;
+    padding: 0.6em 1em;
+    background: var(--c-ink);
+    color: var(--c-paper);
+    font-weight: 700;
+    border-radius: var(--radius-control);
+    translate: 0 -200%;
+  }
+
+  .skip:focus-visible {
+    translate: 0 0;
+  }
+
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--header-h);
+    color: var(--fg);
+    background-color: var(--bg);
+    background-image: var(--paper-layers);
+    background-size: var(--paper-sizes);
+    transition:
+      background-color var(--state),
+      color var(--state);
+  }
+
+  /* Over a full-bleed colour the header is flat: no grid on a code card. */
+  :global(html:not([data-tone='paper'])) .site-header {
+    background-image: none;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: calc(var(--header-h) - 3px);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    color: inherit;
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .brand__mark {
+    color: var(--accent);
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .topic {
+    display: none;
+    min-width: 0;
+    margin-inline-start: 0.25rem;
+  }
+
+  .topic__text {
+    display: inline-block;
+    font-size: var(--hand-note);
+    white-space: nowrap;
+  }
+
+  /* The topic is rewritten by hand every time the page changes. */
+  :global(html.motion) .topic__text.is-writing {
+    animation: write 0.6s var(--ease-ink) both;
+  }
+
+  @keyframes write {
+    from {
+      clip-path: inset(-30% 100% -30% -10%);
+    }
+    to {
+      clip-path: inset(-30% -10% -30% -10%);
+    }
+  }
+
+  .nav {
+    display: none;
+    margin-inline-start: auto;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: clamp(0.9rem, 1.8vw, 1.75rem);
+  }
+
+  .nav a {
+    position: relative;
+    display: inline-block;
+    padding: 0.5rem 0;
+    color: inherit;
+    font-size: var(--text-small);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .nav a::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0.3rem 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    scale: 0 1;
+    transform-origin: 0 50%;
+    transition: scale 0.3s var(--ease-ink);
+  }
+
+  .nav a:hover::after,
+  .nav a[aria-current='true']::after {
+    scale: 1 1;
+  }
+
+  .nav a[aria-current='true'] {
+    font-weight: 700;
+  }
+
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    margin-inline-start: auto;
+  }
+
+  .tool {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--state);
+  }
+
+  .tool:hover {
+    background: color-mix(in srgb, var(--fg) 10%, transparent);
+  }
+
+  .tool :global(svg) {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+
+  .tool :global(.tool__sun),
+  :global([data-theme='dark']) .tool :global(.tool__moon) {
+    display: none;
+  }
+
+  :global([data-theme='dark']) .tool :global(.tool__sun) {
+    display: block;
+  }
+
+  .rule {
+    position: relative;
+    height: 3px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--rule) 22%, transparent);
+    overflow: hidden;
+  }
+
+  /* The header line is drawn as you read: scroll progress in ink. */
+  .rule__ink {
+    position: absolute;
+    inset: 0;
+    border-radius: 3px;
+    background: var(--rule);
+    transform-origin: 0 50%;
+    scale: var(--scroll, 1) 1;
+  }
+
+  /* Index: the notebook's table of contents (small screens) */
+  .index {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 1rem var(--gutter) 2rem;
+    border: 0;
+    color: var(--ink);
+    background-color: var(--paper);
+    background-image: var(--paper-layers);
+    background-size: var(--paper-sizes);
+    overflow: auto;
+  }
+
+  .index:popover-open {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: index-in 0.45s var(--ease-out);
+  }
+
+  @keyframes index-in {
+    from {
+      translate: 0 -100%;
+    }
+  }
+
+  .index__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .index__list {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .index__list a {
+    display: block;
+    padding: 0.85rem 0;
+    color: inherit;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .index__lang {
+    margin-top: auto;
+    font-weight: 700;
+  }
+
+  @media (min-width: 30rem) {
+    .topic {
+      display: block;
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .nav {
+      display: block;
+    }
+
+    .tools {
+      margin-inline-start: clamp(0.5rem, 1.5vw, 1.5rem);
+    }
+
+    .tool--index {
+      display: none;
+    }
+  }
+</style>

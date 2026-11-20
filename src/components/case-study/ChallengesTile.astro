@@ -1,0 +1,64 @@
+---
+import SheetTile from './SheetTile.astro';
+
+interface Props {
+  heading: string;
+  challenges: { title: string; text: string }[];
+}
+
+const { heading, challenges } = Astro.props;
+---
+
+<SheetTile heading={heading}>
+  <ol class="challenges">
+    {
+      challenges.map((challenge) => (
+        <li>
+          <h3 class="challenges__title h5">{challenge.title}</h3>
+          <p>{challenge.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</SheetTile>
+
+<style>
+  .challenges {
+    display: grid;
+    gap: 1.1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: challenge;
+  }
+
+  .challenges li {
+    position: relative;
+    display: grid;
+    gap: 0.3rem;
+    padding-inline-start: 2.1rem;
+    counter-increment: challenge;
+  }
+
+  .challenges li::before {
+    content: counter(challenge);
+    position: absolute;
+    left: 0;
+    top: -0.2rem;
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: 1.7rem;
+    line-height: 1;
+    color: var(--blue);
+  }
+
+  .challenges__title {
+    margin: 0;
+  }
+
+  .challenges p {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--fg-soft);
+  }
+</style>

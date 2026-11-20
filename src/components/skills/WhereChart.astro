@@ -1,0 +1,130 @@
+---
+import WhereRow from './WhereRow.astro';
+import { sketchLine } from '@/lib/sketch';
+import { buildTimeline } from '@/lib/skills-map';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const timeline = buildTimeline(new Date());
+const columns = timeline.years.length;
+const yearLines = Array.from({ length: columns + 1 }, (_, index) => sketchLine([index * 100, 0], [index * 100, 100], `where-year-${index}`, 0.25));
+const todayX = timeline.today * columns * 100;
+const todayLine = sketchLine([todayX, 0], [todayX, 100], 'where-today', 0.25);
+const placeNames: Record<string, string> = t.skills.places;
+---
+
+<figure class="where">
+  <span class="tape where__tape" aria-hidden="true"></span>
+  <figcaption class="where__title hand">{t.skills.where}</figcaption>
+
+  <div class="where__chart" style={`--columns: ${columns}; --today: ${timeline.today.toFixed(4)}`}>
+    <ol class="where__years" aria-hidden="true">
+      {timeline.years.map((year) => <li>{year}</li>)}
+    </ol>
+    <span class="where__today" aria-hidden="true">{t.skills.today}</span>
+
+    <div class="where__body">
+      <svg class="where__grid" viewBox={`0 0 ${columns * 100} 100`} preserveAspectRatio="none" aria-hidden="true">
+        {yearLines.map((line) => <path class="ink" d={line} />)}
+        <path class="ink where__now" d={todayLine}></path>
+      </svg>
+      <ul class="where__rows">
+        {
+          timeline.rows.map((row, index) => (
+            <WhereRow row={row} name={placeNames[row.place.id] ?? row.place.name} today={t.skills.today} index={index} />
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .where {
+    --label: clamp(6.75rem, 32%, 9.5rem);
+    position: relative;
+    margin: 0;
+    padding: clamp(1.6rem, 3.5vw, 2.25rem) clamp(1rem, 3vw, 1.75rem) clamp(1.25rem, 3vw, 1.75rem);
+    border-radius: var(--radius-sheet);
+    background: var(--sheet);
+    box-shadow: var(--shadow-sheet);
+    rotate: -0.6deg;
+  }
+
+  .where__tape {
+    top: -0.8rem;
+    left: 50%;
+    translate: -50% 0;
+    rotate: 2.5deg;
+  }
+
+  .where__title {
+    margin-bottom: 0.9rem;
+  }
+
+  .where__chart {
+    position: relative;
+  }
+
+  .where__years {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    margin: 0 0 0.35rem var(--label);
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+    line-height: 1;
+    color: var(--fg-soft);
+  }
+
+  .where__years li {
+    translate: -0.2em 0;
+  }
+
+  .where__today {
+    position: absolute;
+    top: -1.15rem;
+    left: calc(var(--label) + (100% - var(--label)) * var(--today));
+    translate: -50% 0;
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+    line-height: 1;
+    color: var(--blue);
+  }
+
+  .where__body {
+    position: relative;
+  }
+
+  .where__grid {
+    position: absolute;
+    inset: 0 0 0 var(--label);
+    width: calc(100% - var(--label));
+    height: 100%;
+    overflow: visible;
+    color: var(--ink-faint);
+    opacity: 0.55;
+  }
+
+  .where__grid .ink {
+    stroke-width: 1.2;
+  }
+
+  .where__grid .where__now {
+    color: var(--blue);
+    stroke: var(--blue);
+    stroke-width: 1.6;
+  }
+
+  .where__rows {
+    position: relative;
+    display: grid;
+    margin: 0;
+    padding-block: 0.35rem;
+  }
+</style>

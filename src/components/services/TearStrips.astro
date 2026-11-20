@@ -1,0 +1,142 @@
+---
+interface Strip {
+  label: string;
+  name: string;
+  topic: string;
+  prefill: string;
+}
+
+interface Props {
+  strips: Strip[];
+  actionLabel: string;
+}
+
+const { strips, actionLabel } = Astro.props;
+---
+
+<ul class="strips" style={`--count: ${strips.length}`}>
+  {
+    strips.map((strip) => (
+      <li class="strips__slot">
+        <a class="strip" href="#contact-form" data-tone="note" data-strip data-topic={strip.topic} data-prefill={strip.prefill}>
+          <span class="strip__label">
+            <span class="sr-only">{actionLabel}: </span>
+            {strip.label}
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .strips {
+    display: grid;
+    grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+    gap: 2px;
+    padding-inline: 2px;
+  }
+
+  .strips__slot {
+    --sway: -0.4deg;
+    position: relative;
+    display: grid;
+    min-width: 0;
+  }
+
+  .strips__slot:nth-child(4n + 2) {
+    --sway: 0.3deg;
+  }
+
+  .strips__slot:nth-child(4n + 3) {
+    --sway: -0.2deg;
+  }
+
+  .strips__slot:nth-child(4n) {
+    --sway: 0.5deg;
+  }
+
+  .strips__slot::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 0.5rem;
+    background: var(--c-paper);
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% 55%,
+      93% 100%,
+      86% 50%,
+      79% 95%,
+      72% 45%,
+      65% 100%,
+      58% 55%,
+      51% 90%,
+      44% 50%,
+      37% 100%,
+      30% 45%,
+      23% 95%,
+      16% 55%,
+      9% 100%,
+      0 60%
+    );
+    visibility: hidden;
+  }
+
+  .strips__slot.has-torn::before {
+    visibility: visible;
+  }
+
+  .strip {
+    display: grid;
+    place-items: center;
+    min-height: clamp(5.5rem, 9vw, 7rem);
+    padding: 0.75rem clamp(0.2rem, 1.2vw, 1rem) 0.9rem;
+    border-radius: 0 0 var(--radius-paper) var(--radius-paper);
+    box-shadow: 0 0.6rem 0.9rem rgb(var(--shadow) / 0.16);
+    color: var(--c-ink);
+    font-weight: 700;
+    font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transform-origin: 50% 0;
+    rotate: var(--sway);
+    transition:
+      rotate 0.35s var(--ease-out),
+      translate 0.35s var(--ease-out),
+      color var(--state);
+  }
+
+  .strip__label {
+    text-wrap: balance;
+  }
+
+  .strip:hover,
+  .strip:focus-visible {
+    color: var(--c-blue);
+    rotate: calc(var(--sway) + 1.2deg);
+    translate: 0 4px;
+  }
+
+  .strip.is-torn {
+    pointer-events: none;
+    animation: strip-fall 0.5s cubic-bezier(0.5, 0, 0.9, 0.4) forwards;
+  }
+
+  @keyframes strip-fall {
+    25% {
+      rotate: calc(var(--sway) + 3deg);
+      translate: 0 0.35rem;
+      opacity: 1;
+    }
+
+    100% {
+      rotate: 12deg;
+      translate: 1.5rem 180%;
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+</style>

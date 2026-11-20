@@ -1,0 +1,47 @@
+---
+import { sketchArrow } from '@/lib/sketch';
+
+interface Props {
+  text: string;
+  seed: string;
+}
+
+const { text, seed } = Astro.props;
+const arrow = sketchArrow([14, 2], [12, 40], seed, 0.12, 12);
+---
+
+<p class="scroll-hint" aria-hidden="true">
+  <span class="hand">{text}</span>
+  <svg viewBox="0 0 26 44" width="26" height="44">
+    <path class="ink" d={arrow.shaft}></path>
+    <path class="ink" d={arrow.head}></path>
+  </svg>
+</p>
+
+<style>
+  .scroll-hint {
+    display: none;
+  }
+
+  :global(html.motion) .scroll-hint {
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+    color: var(--blue);
+    pointer-events: none;
+  }
+
+  :global(html.motion) .scroll-hint .hand {
+    font-size: var(--hand-tag);
+  }
+
+  :global(html.motion) .scroll-hint svg {
+    animation: scroll-hint-nudge 1.6s var(--ease-ink) infinite alternate;
+  }
+
+  @keyframes scroll-hint-nudge {
+    to {
+      translate: 0 6px;
+    }
+  }
+</style>

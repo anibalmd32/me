@@ -1,0 +1,106 @@
+---
+import { render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Base from '@/layouts/Base.astro';
+import Signature from './Signature.astro';
+import CaseStudyHead from './case-study/CaseStudyHead.astro';
+import CaseStudyBento from './case-study/CaseStudyBento.astro';
+import CaseStudyProse from './case-study/CaseStudyProse.astro';
+import CaseStudyEnd from './case-study/CaseStudyEnd.astro';
+import { getProjects, projectSlug, type Project } from '@/lib/projects';
+import { SITE, type Lang } from '@/data/site';
+import { homePath, otherLang, projectPath, useT } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+  project: Project;
+}
+
+const { lang, project } = Astro.props;
+const t = useT(lang);
+const { Content } = await render(project);
+const { title, summary, stack, draft, cover, coverAlt } = project.data;
+
+const og = cover
+  ? await getImage({ src: cover, width: 1200, height: 630, fit: 'cover', position: 'top', format: 'png' })
+  : null;
+const ogImage = og ? { src: og.src, alt: coverAlt ?? title, width: 1200, height: 630 } : undefined;
+
+const slug = projectSlug(project);
+const path = projectPath(lang, slug);
+const projects = await getProjects(lang);
+const index = projects.findIndex((entry) => entry.id === project.id);
+const nextProject = projects.length > 1 ? projects[(index + 1) % projects.length] : null;
+const next = nextProject ? { title: nextProject.data.title, href: projectPath(lang, projectSlug(nextProject)) } : null;
+const home = homePath(lang);
+const abs = (p: string) => new URL(p, SITE.url).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${title}: ${t.caseStudy.pageTitle}`,
+    description: summary,
+    inLanguage: lang,
+    url: abs(path),
+    mainEntityOfPage: abs(path),
+    image: abs(ogImage?.src ?? `/og-${lang}.png`),
+    author: { '@type': 'Person', '@id': `${SITE.url}/#person`, name: SITE.name, url: SITE.url },
+    about: stack,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: abs(home) },
+      { '@type': 'ListItem', position: 2, name: t.projects.title, item: abs(`${home}#projects`) },
+      { '@type': 'ListItem', position: 3, name: title, item: abs(path) },
+    ],
+  },
+];
+---
+
+<Base
+  lang={lang}
+  title={`${title}: ${t.caseStudy.pageTitle} | ${SITE.name}`}
+  description={summary}
+  path={path}
+  altPath={projectPath(otherLang(lang), slug)}
+  topic={t.header.topics.caseStudy}
+  ogType="article"
+  noindex={draft}
+  jsonLd={jsonLd}
+  ogImage={ogImage}
+>
+  <article class="cs wrap">
+    <CaseStudyHead
+      t={t}
+      slug={slug}
+      title={title}
+      summary={summary}
+      backHref={`${home}#projects`}
+      draft={draft}
+    />
+    <CaseStudyBento t={t} project={project} />
+    <section class="cs__story" aria-label={t.caseStudy.story}>
+      <CaseStudyProse>
+        <Content />
+      </CaseStudyProse>
+    </section>
+    <CaseStudyEnd t={t} next={next} contactHref={`${home}#contact-form`} />
+  </article>
+  <Signature t={t} topHref={home} />
+</Base>
+
+<style>
+  .cs {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4.5rem);
+    padding-top: calc(var(--header-h) + clamp(2rem, 6vw, 4.5rem));
+  }
+
+  .cs__story {
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+    border-top: 2px solid var(--ink);
+  }
+</style>

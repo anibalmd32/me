@@ -1,0 +1,224 @@
+---
+import Icon from '../Icon.astro';
+import PostcardStamp from './PostcardStamp.astro';
+import TextField from './TextField.astro';
+import MessageField from './MessageField.astro';
+import TopicChoices from './TopicChoices.astro';
+import { SITE } from '@/data/site';
+import { sketchLine } from '@/lib/sketch';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const c = t.contact;
+const connected = Boolean(SITE.contactEndpoint);
+const divider = sketchLine([6, 0], [6, 1000], 'postcard-divider', 0.5);
+const host = new URL(SITE.url).host;
+---
+
+<form
+  class="card"
+  method="post"
+  action={SITE.contactEndpoint || undefined}
+  data-contact-form
+  data-endpoint={SITE.contactEndpoint}
+  data-sending={c.sending}
+  data-error={c.error}
+  data-not-configured={c.notConfigured}
+>
+  <input type="hidden" name="_subject" value={c.subject} />
+  {SITE.contactAccessKey && <input type="hidden" name="access_key" value={SITE.contactAccessKey} />}
+  <p class="sr-only" aria-hidden="true">
+    <label>
+      Leave this field empty
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+    </label>
+  </p>
+
+  <div class="card__message">
+    <MessageField label={c.message} hint={c.messageHint} error={c.errors.message} />
+    <svg class="card__divider" viewBox="0 0 12 1000" preserveAspectRatio="none" aria-hidden="true">
+      <path class="ink" d={divider}></path>
+    </svg>
+  </div>
+
+  <div class="card__head">
+    <p class="card__to">
+      <span class="hand">{c.to}</span>
+      <span class="card__name display">{SITE.name}</span>
+    </p>
+    <PostcardStamp connected={connected} soonLabel={t.projects.soon} postmarkLabel={c.postmark} site={host} />
+  </div>
+
+  <div class="card__from">
+    <p class="card__label hand" aria-hidden="true">{c.from}</p>
+    <TextField id="f-name" name="name" label={c.name} error={c.errors.name} autocomplete="name" />
+    <TextField id="f-email" name="email" type="email" label={c.email} error={c.errors.email} autocomplete="email" />
+  </div>
+
+  <div class="card__topic">
+    <TopicChoices legend={c.topic} topics={c.topics} />
+  </div>
+
+  <div class="card__end">
+    {!connected && <p class="card__offline" role="note">{c.offline}</p>}
+    <div class="card__send">
+      {
+        connected ? (
+          <button class="btn btn--primary" type="submit">
+            <span data-submit-label>{c.submit}</span>
+            <Icon name="send" />
+          </button>
+        ) : (
+          <button class="btn" type="submit" disabled aria-disabled="true">
+            <Icon name="send" />
+            <span data-submit-label>{c.submit}</span>
+            <span class="btn__soon" aria-hidden="true">
+              {t.projects.soon}
+            </span>
+          </button>
+        )
+      }
+      <p class="card__status" role="status" aria-live="polite" data-form-status></p>
+    </div>
+  </div>
+
+  <p class="card__privacy">{c.privacy}</p>
+</form>
+
+<style>
+  .card {
+    --pad: clamp(1.15rem, 3.6vw, 2.5rem);
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'head' 'message' 'from' 'topic' 'end' 'privacy';
+    gap: clamp(1.1rem, 2.6vw, 1.6rem);
+    max-width: 66rem;
+    margin-inline: auto;
+    padding: var(--pad);
+    overflow: clip;
+    border: 1px solid var(--sheet-line);
+    border-radius: var(--radius-sheet);
+    background: var(--sheet);
+    box-shadow: var(--shadow-sheet);
+  }
+
+  .card__message {
+    position: relative;
+    grid-area: message;
+  }
+
+  .card__divider {
+    display: none;
+  }
+
+  .card__head {
+    grid-area: head;
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .card__to {
+    display: grid;
+    gap: 0.15rem;
+    justify-items: start;
+    padding-top: 0.35rem;
+  }
+
+  .card__name {
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+  }
+
+  .card__from {
+    grid-area: from;
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .card__label {
+    justify-self: start;
+    margin-bottom: 0.2rem;
+  }
+
+  .card__topic {
+    grid-area: topic;
+  }
+
+  .card__end {
+    grid-area: end;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .card__offline {
+    justify-self: start;
+    padding: 0.7rem 0.9rem;
+    border: 2px dashed var(--fg-soft);
+    border-radius: var(--radius-control);
+    font-weight: 600;
+    font-size: var(--text-small);
+    line-height: 1.4;
+  }
+
+  .card__send {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .card__send .btn--primary[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .card__status {
+    font-weight: 600;
+  }
+
+  .card__status:global(.is-bad) {
+    color: var(--bad);
+  }
+
+  .card__privacy {
+    grid-area: privacy;
+    max-width: 62ch;
+    color: var(--fg-soft);
+    font-size: var(--text-small);
+  }
+
+  @media (min-width: 56rem) {
+    .card {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas:
+        'message head'
+        'message from'
+        'message topic'
+        'message end'
+        'privacy privacy';
+      column-gap: calc(var(--pad) * 2);
+    }
+
+    .card__divider {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: calc(var(--pad) * -1 - 6px);
+      width: 12px;
+      height: 100%;
+      overflow: visible;
+      color: var(--ink);
+      opacity: 0.45;
+    }
+
+    .card__divider .ink {
+      stroke-width: 1.8;
+    }
+  }
+</style>

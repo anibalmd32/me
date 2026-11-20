@@ -1,0 +1,197 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from '../Icon.astro';
+
+interface Props {
+  title: string;
+  issuer: string;
+  when: string;
+  url: string;
+  image: ImageMetadata;
+  alt: string;
+  viewLabel: string;
+  index: number;
+}
+
+const { title, issuer, when, url, image, alt, viewLabel, index } = Astro.props;
+---
+
+<li class="diploma" data-ink style={`--d: ${(index * 0.12).toFixed(2)}s`}>
+  <article class="diploma__card" data-tone="note">
+    <span class="tape diploma__tape" aria-hidden="true"></span>
+    <Image
+      class="diploma__image"
+      src={image}
+      alt={alt}
+      widths={[360, 540, 824]}
+      sizes="(min-width: 56rem) 24rem, min(86vw, 26rem)"
+      format="webp"
+      quality={84}
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="diploma__caption">
+      <h4 class="diploma__title h5">{title}</h4>
+      <p class="diploma__meta">
+        <span>{issuer}</span>
+        <span class="diploma__when">{when}</span>
+      </p>
+      <a class="diploma__link" href={url} target="_blank" rel="noopener">
+        {viewLabel}
+        <span class="sr-only">: {title}</span>
+        <Icon name="external" />
+      </a>
+    </div>
+  </article>
+</li>
+
+<style>
+  .diploma {
+    --tilt: -2.5deg;
+    --drop: 0rem;
+    width: min(100%, 26rem);
+    rotate: var(--tilt);
+    translate: 0 var(--drop);
+  }
+
+  .diploma:nth-child(3n + 2) {
+    --tilt: 1.8deg;
+  }
+
+  .diploma:nth-child(3n) {
+    --tilt: -1.2deg;
+  }
+
+  .diploma__card {
+    position: relative;
+    display: grid;
+    gap: 0.85rem;
+    padding: 0.65rem 0.65rem 1.1rem;
+    border-radius: var(--radius-paper);
+    box-shadow: var(--shadow-note);
+    transition:
+      rotate 0.4s var(--ease-out),
+      translate 0.4s var(--ease-out),
+      box-shadow 0.4s var(--ease-out);
+  }
+
+  .diploma__card:hover,
+  .diploma__card:focus-within {
+    rotate: calc(var(--tilt) * -1);
+    translate: 0 -0.5rem;
+    box-shadow:
+      0 1.9rem 2.6rem rgb(var(--shadow) / 0.26),
+      0 2px 0 rgb(0 0 0 / 0.04);
+  }
+
+  .diploma:hover,
+  .diploma:focus-within {
+    z-index: 1;
+  }
+
+  .diploma__tape {
+    top: -0.75rem;
+    left: 50%;
+    z-index: 1;
+    translate: -50% 0;
+    rotate: 2deg;
+  }
+
+  .diploma:nth-child(even) .diploma__tape {
+    rotate: -3deg;
+  }
+
+  .diploma__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+    outline: 1px solid rgb(27 29 36 / 0.1);
+    outline-offset: -1px;
+  }
+
+  .diploma__caption {
+    display: grid;
+    gap: 0.35rem;
+    padding-inline: 0.35rem;
+  }
+
+  .diploma__title {
+    margin: 0;
+  }
+
+  .diploma__meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    color: var(--fg-soft);
+    font-size: var(--text-small);
+  }
+
+  .diploma__when {
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: var(--hand-tag);
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .diploma__link {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    font-weight: 700;
+  }
+
+  .diploma__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .diploma__link :global(svg) {
+    width: 1.05rem;
+    height: 1.05rem;
+    transition: translate 0.25s var(--ease-out);
+  }
+
+  .diploma__card:hover .diploma__link :global(svg) {
+    translate: 2px -2px;
+  }
+
+  @media (min-width: 56rem) {
+    .diploma {
+      width: auto;
+      margin-inline: -0.15rem;
+    }
+
+    .diploma:nth-child(3n + 2) {
+      --drop: 2.25rem;
+    }
+
+    .diploma:nth-child(3n) {
+      --drop: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion) .diploma[data-ink] .diploma__card {
+      opacity: 0;
+      scale: 1.12;
+      transition:
+        opacity 0.2s linear var(--d),
+        scale 0.55s var(--ease-snap) var(--d),
+        rotate 0.4s var(--ease-out),
+        translate 0.4s var(--ease-out),
+        box-shadow 0.4s var(--ease-out);
+    }
+
+    :global(html.motion) .diploma[data-ink].is-in .diploma__card {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+</style>

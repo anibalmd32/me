@@ -1,0 +1,21 @@
+---
+interface Props {
+  label: string;
+  stack: readonly string[];
+}
+
+const { label, stack } = Astro.props;
+const NO_BREAK_SPACE = ' ';
+const SEPARATOR_KEPT_WITH_PREVIOUS_NAME = `${NO_BREAK_SPACE}${NO_BREAK_SPACE}·  `;
+const unbreakableNames = stack.map((name) => name.replaceAll(' ', NO_BREAK_SPACE));
+---
+
+<p class="stack-line mono"><span class="sr-only">{label}: </span>{unbreakableNames.join(SEPARATOR_KEPT_WITH_PREVIOUS_NAME)}</p>
+
+<style>
+  .stack-line {
+    margin: 0;
+    color: var(--fg-soft);
+    white-space: pre-wrap;
+  }
+</style>

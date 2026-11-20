@@ -1,0 +1,145 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import { sketchUnderline } from '@/lib/sketch';
+import { SITE } from '@/data/site';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  t: Dictionary;
+  /** Where "back to the top" points. */
+  topHref?: string;
+}
+
+const { t, topHref = '#top' } = Astro.props;
+const underline = sketchUnderline(300, 'firma', 12);
+const year = new Date().getFullYear();
+const socials = (Object.entries(SITE.socials) as [keyof typeof SITE.socials, string][])
+  .filter(([, url]) => url)
+  .map(([name, url]) => ({ name, url, label: t.signature[name], icon: name as IconName }));
+---
+
+<!-- Brand signature: it closes the notebook, it never opens it. -->
+<footer class="sig">
+  <div class="wrap">
+    <div class="sig__sign" data-ink>
+      <p class="sig__name"><span class="hand-write">{t.signature.name}</span></p>
+      <svg class="sig__underline" viewBox="0 0 310 34" preserveAspectRatio="none" aria-hidden="true">
+        <path class="ink ink--marker ink-draw" pathLength="1" style="--d: 0.55s" d={underline}></path>
+      </svg>
+      <p class="sig__handle mono">{SITE.handle}</p>
+      <p class="sig__cta">{t.signature.cta}</p>
+    </div>
+
+    <div class="sig__foot">
+      <p>&copy; {year} {t.signature.rights}</p>
+      {
+        socials.length > 0 && (
+          <ul class="sig__links">
+            {socials.map((social) => (
+              <li>
+                <a href={social.url} target="_blank" rel="noopener me">
+                  <Icon name={social.icon} />
+                  {social.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <a class="sig__top" href={topHref}>
+        <Icon name="arrow-up" />
+        {t.signature.top}
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .sig {
+    padding-block: clamp(3rem, 8vw, 6rem) 2rem;
+  }
+
+  .sig__sign {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .sig__name {
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: clamp(5rem, 17vw, 11rem);
+    line-height: 0.9;
+    color: var(--blue);
+    rotate: -4deg;
+  }
+
+  .sig__name span {
+    display: inline-block;
+    padding-inline: 0.08em;
+  }
+
+  .sig__underline {
+    width: clamp(12rem, 38vw, 24rem);
+    height: 1.6rem;
+    margin-top: -0.4rem;
+    rotate: -4deg;
+    overflow: visible;
+  }
+
+  .sig__underline .ink {
+    stroke-width: 9;
+  }
+
+  .sig__handle {
+    margin-top: 2rem;
+    font-size: 1.05rem;
+  }
+
+  .sig__cta {
+    margin-top: 0.6rem;
+    color: var(--fg-soft);
+    font-weight: 700;
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+  }
+
+  .sig__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-top: clamp(3.5rem, 9vw, 6.5rem);
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--ink);
+    font-size: var(--text-small);
+  }
+
+  .sig__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .sig__links a,
+  .sig__top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.75rem;
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .sig__links a:hover,
+  .sig__top:hover {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+
+  .sig__foot :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+</style>

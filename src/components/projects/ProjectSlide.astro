@@ -1,0 +1,111 @@
+---
+import ProjectLinks from '../ProjectLinks.astro';
+import StackLine from '../StackLine.astro';
+import ProjectMedia from './ProjectMedia.astro';
+import { projectSlug, type Project } from '@/lib/projects';
+import { projectPath, type Dictionary } from '@/i18n';
+import type { Lang } from '@/data/site';
+
+interface Props {
+  lang: Lang;
+  t: Dictionary;
+  project: Project;
+  index: number;
+  total: number;
+}
+
+const { lang, t, project, index, total } = Astro.props;
+const slug = projectSlug(project);
+const href = projectPath(lang, slug);
+const { title, summary, stack, draft, repo, demo } = project.data;
+const position = t.projects.slide.replace('{n}', String(index + 1)).replace('{total}', String(total));
+---
+
+<li
+  class="slide"
+  data-slide
+  data-slug={slug}
+  role="group"
+  aria-roledescription="slide"
+  aria-label={`${title}, ${position}`}
+  style={`--vt-media: project-media-${slug}; --vt-title: project-title-${slug}`}
+>
+  <div class="slide__card" data-slide-card>
+    <a class="slide__frame" href={href} tabindex="-1" aria-hidden="true" data-slide-frame>
+      <ProjectMedia project={project} sizes="(min-width: 64rem) 46rem, 82vw" eager={index === 0} />
+    </a>
+    <div class="slide__caption" data-slide-caption>
+      <h3 class="slide__title display">
+        <a href={href} aria-label={t.projects.open.replace('{title}', title)}>{title}</a>
+        {draft && <span class="draft-tag">{t.projects.draft}</span>}
+      </h3>
+      <p class="slide__summary">{summary}</p>
+      <StackLine label={t.projects.stack} stack={stack} />
+      <ProjectLinks t={t} repo={repo} demo={demo} caseStudy={href} row />
+    </div>
+  </div>
+</li>
+
+<style>
+  .slide__card {
+    display: contents;
+  }
+
+  .slide {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    align-content: start;
+  }
+
+  .slide__frame {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--code-line);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1.5rem 3rem -1rem rgb(0 0 0 / 0.55);
+    color: inherit;
+    text-decoration: none;
+    view-transition-name: var(--vt-media);
+  }
+
+  .slide__caption {
+    display: grid;
+    gap: 0.85rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .slide__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.25rem 0.85rem;
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+  }
+
+  .slide__title a {
+    color: inherit;
+    text-decoration: none;
+    view-transition-name: var(--vt-title);
+    background-image: linear-gradient(var(--syn-fn), var(--syn-fn));
+    background-repeat: no-repeat;
+    background-size: 0% 3px;
+    background-position: 0 100%;
+    transition: background-size 0.35s var(--ease-ink);
+  }
+
+  .slide__title a:hover {
+    background-size: 100% 3px;
+  }
+
+  .slide__summary {
+    max-width: 52ch;
+    margin: 0;
+    font-size: clamp(1.02rem, 1.3vw, 1.15rem);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+</style>

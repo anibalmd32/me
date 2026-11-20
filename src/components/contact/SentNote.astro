@@ -1,0 +1,62 @@
+---
+interface Props {
+  title: string;
+  body: string;
+  again: string;
+}
+
+const { title, body, again } = Astro.props;
+---
+
+<div class="sent" data-tone="sticky" data-card data-form-success tabindex="-1" hidden>
+  <span class="tape sent__tape" aria-hidden="true"></span>
+  <p class="sent__title">{title}</p>
+  <p>{body}</p>
+  <button class="btn" type="button" data-form-again>{again}</button>
+</div>
+
+<style>
+  .sent {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+    width: min(100%, 26rem);
+    margin-inline: auto;
+    padding: 2.5rem 2rem 2rem;
+    border-bottom-right-radius: 1.2rem;
+    box-shadow: var(--shadow-note);
+    rotate: -1.5deg;
+    animation: sent-stick 0.55s var(--ease-snap);
+  }
+
+  .sent[hidden] {
+    display: none;
+  }
+
+  .sent:focus-visible {
+    outline-offset: 6px;
+  }
+
+  .sent__tape {
+    top: -0.75rem;
+    left: 50%;
+    translate: -50% 0;
+    rotate: -3deg;
+  }
+
+  .sent__title {
+    font-family: var(--font-hand), cursive;
+    font-weight: 700;
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+
+  @keyframes sent-stick {
+    from {
+      opacity: 0;
+      rotate: -9deg;
+      scale: 1.15;
+    }
+  }
+</style>

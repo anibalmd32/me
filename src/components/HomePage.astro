@@ -1,0 +1,96 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from './Hero.astro';
+import Skills from './Skills.astro';
+import Experience from './Experience.astro';
+import Projects from './Projects.astro';
+import Services from './Services.astro';
+import Products from './Products.astro';
+import Contact from './Contact.astro';
+import Signature from './Signature.astro';
+import { SITE, type Lang } from '@/data/site';
+import { SKILL_GROUPS } from '@/data/skills';
+import { homePath, otherLang, useT } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useT(lang);
+const url = new URL(homePath(lang), SITE.url).href;
+const sameAs = Object.values(SITE.socials).filter(Boolean);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE.url}/#website`,
+    url: SITE.url,
+    name: SITE.name,
+    inLanguage: ['en', 'es'],
+    publisher: { '@id': `${SITE.url}/#person` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    '@id': `${url}#profile`,
+    url,
+    name: t.meta.title,
+    description: t.meta.description,
+    inLanguage: lang,
+    isPartOf: { '@id': `${SITE.url}/#website` },
+    mainEntity: {
+      '@type': 'Person',
+      '@id': `${SITE.url}/#person`,
+      name: SITE.name,
+      url: SITE.url,
+      jobTitle: t.experience.role,
+      description: t.meta.description,
+      address: { '@type': 'PostalAddress', addressRegion: 'Apure', addressCountry: 'VE' },
+      knowsLanguage: ['es', 'en'],
+      knowsAbout: SKILL_GROUPS.slice(0, 6).flatMap((group) => group.tools.map((tool) => t.skills.tools[tool])),
+      hasCredential: t.experience.certs.map((cert) => ({
+        '@type': 'EducationalOccupationalCredential',
+        name: cert.title,
+        credentialCategory: 'certificate',
+        url: cert.url,
+        recognizedBy: { '@type': 'Organization', name: cert.issuer },
+      })),
+      ...(sameAs.length ? { sameAs } : {}),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    '@id': `${t.products.featured.link}/#app`,
+    name: t.products.featured.name,
+    url: t.products.featured.link,
+    description: t.products.featured.body,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    inLanguage: 'es',
+    creator: { '@id': `${SITE.url}/#person` },
+  },
+];
+---
+
+<Base
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  path={homePath(lang)}
+  altPath={homePath(otherLang(lang))}
+  topic={t.header.topics.hero}
+  home
+  jsonLd={jsonLd}
+>
+  <Hero lang={lang} t={t} />
+  <Skills t={t} />
+  <Experience t={t} />
+  <Projects lang={lang} t={t} />
+  <Services t={t} />
+  <Products t={t} />
+  <Contact t={t} />
+  <Signature t={t} />
+</Base>

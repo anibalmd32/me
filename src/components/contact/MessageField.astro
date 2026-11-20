@@ -1,0 +1,93 @@
+---
+interface Props {
+  label: string;
+  hint: string;
+  error: string;
+}
+
+const { label, hint, error } = Astro.props;
+---
+
+<div class="message">
+  <label for="f-message">{label}</label>
+  <p class="message__hint" id="h-message">{hint}</p>
+  <textarea id="f-message" name="message" rows="6" required minlength="20" aria-describedby="h-message e-message"></textarea>
+  <div class="message__slot">
+    <p class="message__error" id="e-message" data-error-for="message" hidden>{error}</p>
+  </div>
+</div>
+
+<style>
+  .message {
+    --line: 2.05rem;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 0.3rem;
+    min-width: 0;
+    height: 100%;
+  }
+
+  label {
+    font-weight: 700;
+    font-size: var(--text-small);
+  }
+
+  .message__hint {
+    color: var(--fg-soft);
+    font-size: var(--text-small);
+  }
+
+  textarea {
+    display: block;
+    width: 100%;
+    min-height: calc(var(--line) * 6 + 0.9rem);
+    height: 100%;
+    margin-top: 0.3rem;
+    padding: 0.4rem 0.8rem 0.5rem;
+    border: 0;
+    border-bottom: 1.5px solid var(--field-line);
+    border-radius: var(--radius-control) var(--radius-control) 0 0;
+    background-color: var(--field);
+    background-image: linear-gradient(transparent calc(var(--line) - 1px), var(--field-line) calc(var(--line) - 1px));
+    background-size: 100% var(--line);
+    background-position: 0 0.4rem;
+    background-attachment: local;
+    color: var(--ink);
+    font-size: 1.1rem;
+    line-height: var(--line);
+    resize: none;
+    field-sizing: content;
+    transition:
+      border-color var(--state),
+      box-shadow var(--state);
+  }
+
+  textarea:hover {
+    border-bottom-color: var(--blue);
+  }
+
+  textarea:focus-visible {
+    outline: none;
+    border-bottom-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-wash);
+  }
+
+  textarea[aria-invalid='true'],
+  textarea[aria-invalid='true']:hover {
+    border-bottom-color: var(--bad);
+  }
+
+  textarea[aria-invalid='true']:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent);
+  }
+
+  .message__slot {
+    min-height: 1.45rem;
+  }
+
+  .message__error {
+    color: var(--bad);
+    font-weight: 600;
+    font-size: var(--text-small);
+  }
+</style>

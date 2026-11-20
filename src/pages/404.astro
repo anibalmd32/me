@@ -1,0 +1,49 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import { useT } from '@/i18n';
+
+const t = useT('en');
+const es = useT('es');
+---
+
+<Base
+  lang="en"
+  title={`${t.notFound.title} | Anibal Mendoza`}
+  description={t.notFound.body}
+  path="/404/"
+  altPath="/es/"
+  topic={t.header.topics.notFound}
+  noindex
+>
+  <div class="missing wrap">
+    <h1 class="display h1">{t.notFound.title}</h1>
+    <p class="lead">{t.notFound.body}</p>
+    <a class="btn btn--primary" href="/">
+      <Icon name="arrow-left" />
+      {t.notFound.cta}
+    </a>
+    <p class="missing__es" lang="es">
+      <span class="hand">{es.notFound.title}</span>
+      <a href="/es/">{es.notFound.cta}</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .missing {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+    align-content: center;
+    min-height: 100svh;
+    padding-block: calc(var(--header-h) + 3rem) 4rem;
+  }
+
+  .missing__es {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: start;
+    margin-top: 2rem;
+  }
+</style>
