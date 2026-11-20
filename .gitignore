@@ -32,3 +32,16 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# astro
+.astro
+
+# AI agent files
+.agents/
+.claude/
+.impeccable/
+skills-lock.json
+DESIGN.md
+PRODUCT.md
+CLAUDE.md
+AGENTS.md
