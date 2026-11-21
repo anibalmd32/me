@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { withLanguageAlternates } from './src/lib/sitemap-alternates';
 
 // Case studies still marked `draft: true` are placeholders: they are built so
 // they can be reviewed, but kept out of the sitemap (and served with noindex).
@@ -38,11 +39,8 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      i18n: {
-        defaultLocale: 'en',
-        locales: { en: 'en', es: 'es' },
-      },
       filter: (page) => !page.includes('/404') && !isDraftCaseStudy(page),
+      serialize: withLanguageAlternates,
     }),
   ],
   // Fonts are read from the installed @fontsource packages, so the build never
