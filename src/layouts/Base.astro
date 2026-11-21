@@ -69,10 +69,10 @@ const og = pageOg
     <meta name="description" content={description} />
     <meta name="author" content={SITE.name} />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
-    <link rel="canonical" href={canonical} />
     {
       !noindex && (
         <>
+          <link rel="canonical" href={canonical} />
           <link rel="alternate" hreflang="en" href={abs(paths.en)} />
           <link rel="alternate" hreflang="es" href={abs(paths.es)} />
           <link rel="alternate" hreflang="x-default" href={abs(paths.en)} />
