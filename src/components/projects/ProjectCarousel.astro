@@ -23,9 +23,9 @@ const total = projects.length;
   data-carousel
   data-slide-label={t.projects.slide}
 >
-  <ul class="carousel__track" data-carousel-track>
+  <div class="carousel__track" data-carousel-track>
     {projects.map((project, index) => <ProjectSlide lang={lang} t={t} project={project} index={index} total={total} />)}
-  </ul>
+  </div>
 
   <div class="carousel__controls wrap" data-carousel-controls hidden>
     <button class="carousel__step" type="button" aria-label={t.projects.prev} data-carousel-prev>
