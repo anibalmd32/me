@@ -1,0 +1,39 @@
+---
+import { TOOL_ICONS } from '@/data/tool-icons';
+import type { ToolId } from '@/data/skills';
+
+interface Props {
+  tool: ToolId;
+}
+
+const icon = TOOL_ICONS[Astro.props.tool];
+---
+
+{
+  icon.kind === 'brand' ? (
+    <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d={icon.path} />
+    </svg>
+  ) : (
+    <svg
+      class="tool-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      set:html={icon.body}
+    />
+  )
+}
+
+<style>
+  .tool-icon {
+    flex: none;
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+</style>

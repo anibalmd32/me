@@ -1,7 +1,7 @@
 ---
-import SkillsList from './skills/SkillsList.astro';
-import WhereChart from './skills/WhereChart.astro';
-import { sketchUnderline } from '@/lib/sketch';
+import SkillFigure from './skills/SkillFigure.astro';
+import { SKILL_GROUPS } from '@/data/skills';
+import { figureFor } from '@/lib/figures';
 import type { Dictionary } from '@/i18n';
 
 interface Props {
@@ -9,89 +9,69 @@ interface Props {
 }
 
 const { t } = Astro.props;
-const underline = sketchUnderline(300, 'skills-title', 10);
+const s = t.skills;
+const FIGURES_IN_FIRST_ROW = 5;
+const toolFigures = SKILL_GROUPS.map((group) => ({
+  shape: figureFor(group.id, group.tools.length),
+  label: s.groups[group.id],
+  items: group.tools.map((tool) => ({ name: s.tools[tool], tool })),
+}));
+const spokenFigure = {
+  shape: figureFor('spoken', s.spoken.items.length),
+  label: s.spoken.label,
+  items: s.spoken.items.map((name) => ({ name })),
+};
+const figures = [...toolFigures, spokenFigure];
 ---
 
-<div class="flow skills wrap" data-skills>
-  <div class="skills__head">
-    <h2 class="skills__title display h2" data-ink>
-      {t.skills.title}
-      <svg class="skills__underline" viewBox="0 0 310 30" preserveAspectRatio="none" aria-hidden="true">
-        <path class="ink ink-draw" pathLength="1" d={underline}></path>
-      </svg>
+<div class="flow skills wrap">
+  <header class="skills__head">
+    <h2 class="display h2">
+      {s.pre}<mark>{s.mark}</mark>{s.post}
     </h2>
-    <p class="skills__hint hand">{t.skills.hint}</p>
-  </div>
+    <p class="lead soft">{s.lead}</p>
+  </header>
 
-  <div class="skills__layout">
-    <SkillsList t={t} />
-    <WhereChart t={t} />
+  <div class="skills__frame">
+    <ul class="skills__shelf">
+      {figures.map((figure, index) => <SkillFigure {...figure} order={index % FIGURES_IN_FIRST_ROW} />)}
+    </ul>
   </div>
-
-  <p class="sr-only" aria-live="polite" data-skills-status></p>
 </div>
-
-<script>
-  import { initSkillsMaps } from '@/scripts/skills';
-  initSkillsMaps();
-</script>
 
 <style>
   .skills {
     display: grid;
-    gap: clamp(2.5rem, 6vw, 4rem);
+    gap: var(--block-gap);
+    padding-bottom: 0;
   }
 
   .skills__head {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .skills__frame {
+    container: shelf / inline-size;
+  }
+
+  .skills__shelf {
     display: flex;
     flex-wrap: wrap;
-    align-items: end;
-    gap: 1rem clamp(1.5rem, 4vw, 3rem);
+    align-items: flex-end;
+    gap: 2rem 1.5rem;
   }
 
-  .skills__title {
-    position: relative;
-    padding-bottom: 0.25em;
-  }
-
-  .skills__underline {
-    position: absolute;
-    inset: auto 0 -0.05em 0;
-    width: 100%;
-    height: 0.34em;
-    color: var(--blue);
-    overflow: visible;
-  }
-
-  .skills__underline .ink {
-    stroke-width: 5;
-  }
-
-  .skills__hint {
-    padding-bottom: 0.3em;
-  }
-
-  .skills__layout {
-    display: grid;
-    gap: clamp(2.5rem, 6vw, 3.5rem);
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .skills__layout > :global(.where) {
-    order: -1;
-  }
-
-  @media (min-width: 64rem) {
-    .skills__layout {
-      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-      align-items: start;
-      gap: clamp(2.5rem, 4.5vw, 4.5rem);
+  @container shelf (max-width: 40rem) {
+    .skills__shelf {
+      justify-content: center;
     }
+  }
 
-    .skills__layout > :global(.where) {
-      order: 0;
-      position: sticky;
-      top: calc(var(--header-h) + 2rem);
+  @container shelf (min-width: 66rem) {
+    .skills__shelf {
+      justify-content: space-between;
+      gap: 2.5rem 1rem;
     }
   }
 </style>

@@ -1,0 +1,219 @@
+---
+import ToolIcon from './ToolIcon.astro';
+import { SHELF_WIDTH, type FigureShape } from '@/lib/figures';
+import type { ToolId } from '@/data/skills';
+
+interface Props {
+  shape: FigureShape;
+  label: string;
+  items: readonly { name: string; tool?: ToolId }[];
+  order: number;
+}
+
+const { shape, label, items, order } = Astro.props;
+const { content } = shape;
+const DRAWN_STROKES = /<(rect|path|circle|ellipse) class="(fs|fl|fd)"/g;
+const markup = shape.markup.replace(DRAWN_STROKES, '<$1 pathLength="1" class="$2 fdraw"');
+const sizes = [
+  `--shelf: ${SHELF_WIDTH}`,
+  `--w: ${shape.width}`,
+  `--h: ${shape.height}`,
+  `--it: ${content.top}`,
+  `--ir: ${content.right}`,
+  `--ib: ${content.bottom}`,
+  `--il: ${content.left}`,
+  `--label-h: ${shape.labelHeight ?? 0}`,
+  `--row-h: ${shape.rowHeight ?? 0}`,
+  `--order: ${order}`,
+].join('; ');
+const variants = [`fig--${shape.layout}`, shape.centered && 'fig--centered', shape.middle && 'fig--middle'];
+---
+
+<li class:list={['fig', ...variants]} style={sizes} data-ink>
+  <svg class="fig__shape" viewBox={`0 0 ${shape.width} ${shape.height}`} aria-hidden="true" focusable="false" set:html={markup} />
+  <div class="fig__content">
+    <h3 class="fig__label">{label}</h3>
+    <ul class="fig__tools">
+      {
+        items.map((item, index) => (
+          <li style={`--i: ${index + 1}`}>
+            {item.tool && <ToolIcon tool={item.tool} />}
+            <span>{item.name}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</li>
+
+<style>
+  .fig {
+    --u: 0.0625rem;
+    --d: calc(var(--order) * 0.09s);
+    position: relative;
+    flex: none;
+    width: calc(var(--u) * var(--w));
+    height: calc(var(--u) * var(--h));
+  }
+
+  @container shelf (min-width: 66rem) {
+    .fig {
+      --u: calc(100cqi / var(--shelf));
+    }
+  }
+
+  .fig__shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .fig__shape :global(.fs) {
+    fill: var(--sheet);
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .fig__shape :global(.fl) {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .fig__shape :global(.fd) {
+    fill: none;
+    stroke: var(--ink-faint);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .fig__shape :global(.fdash) {
+    stroke-dasharray: 4 5;
+  }
+
+  .fig__shape :global(.fdot) {
+    fill: var(--ink-faint);
+  }
+
+  .fig__shape :global(.fled) {
+    fill: var(--blue);
+  }
+
+  .fig__shape :global(.fbin) {
+    fill: var(--ink-faint);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .fig__content {
+    position: absolute;
+    inset: calc(var(--u) * var(--it)) calc(var(--u) * var(--ir)) calc(var(--u) * var(--ib)) calc(var(--u) * var(--il));
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 12);
+    min-width: 0;
+    font-size: calc(var(--u) * 15.2);
+  }
+
+  .fig__label {
+    display: flex;
+    align-items: center;
+    flex: none;
+    min-height: calc(var(--u) * var(--label-h));
+    color: var(--fg-soft);
+    font-size: inherit;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .fig__tools {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 7);
+  }
+
+  .fig__tools li {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--u) * 8);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .fig__tools :global(.tool-icon) {
+    width: calc(var(--u) * 17.6);
+    height: calc(var(--u) * 17.6);
+  }
+
+  .fig--grid .fig__tools {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(var(--u) * 8) calc(var(--u) * 12);
+  }
+
+  .fig--wrap .fig__tools {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: calc(var(--u) * 8) calc(var(--u) * 16);
+  }
+
+  .fig--rows .fig__content,
+  .fig--rows .fig__tools {
+    gap: 0;
+  }
+
+  .fig--rows .fig__tools li {
+    height: calc(var(--u) * var(--row-h));
+  }
+
+  .fig--centered .fig__label,
+  .fig--centered .fig__tools li {
+    justify-content: center;
+  }
+
+  .fig--middle .fig__content {
+    justify-content: center;
+  }
+
+  :global(html.motion) .fig__shape :global(.fdraw) {
+    stroke-dasharray: 1;
+    transition:
+      stroke-dashoffset 0.9s var(--ease-ink) var(--d),
+      fill-opacity 0.25s linear calc(var(--d) + 0.6s);
+  }
+
+  :global(html.motion) .fig__shape :global(:is(.fdot, .fled, .fbin, .fdash)) {
+    transition: opacity 0.25s linear calc(var(--d) + 0.75s);
+  }
+
+  :global(html.motion) .fig__label,
+  :global(html.motion) .fig__tools li {
+    transition: clip-path 0.45s var(--ease-ink) calc(var(--d) + 0.55s + var(--i, 0) * 0.05s);
+  }
+
+  :global(html.motion) .fig:not(.is-in) .fig__shape :global(.fdraw) {
+    stroke-dashoffset: 1;
+    fill-opacity: 0;
+  }
+
+  :global(html.motion) .fig:not(.is-in) .fig__shape :global(:is(.fdot, .fled, .fbin, .fdash)) {
+    opacity: 0;
+  }
+
+  :global(html.motion) .fig:not(.is-in) .fig__label,
+  :global(html.motion) .fig:not(.is-in) .fig__tools li {
+    clip-path: inset(-0.4em 104% -0.4em -0.4em);
+  }
+
+  :global(html.motion) .fig.is-in .fig__label,
+  :global(html.motion) .fig.is-in .fig__tools li {
+    clip-path: inset(-0.4em -0.4em -0.4em -0.4em);
+  }
+</style>
