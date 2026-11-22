@@ -8,6 +8,10 @@
  * reading progress and the tone of whatever sits right under it.
  */
 
+import { clamp01 } from './progress-math';
+import { updateRoute } from './route';
+import { updateScrollMarks } from './scroll-marks';
+
 const root = document.documentElement;
 
 /** Smoothed progress per scene id, read by the WebGL hero. */
@@ -26,32 +30,7 @@ type SceneState = {
   lives: Live[];
 };
 
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
-const remap = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
-const smooth = (t: number) => t * t * (3 - 2 * t);
-
-const plateau = (t: number, stops: number, rest = 0.36) => {
-  const moves = stops - 1;
-  if (moves < 1) return 0;
-  const seg = 1 / moves;
-  const i = Math.min(moves - 1, Math.floor(t / seg));
-  const local = (t - i * seg) / seg;
-  return (i + smooth(remap(local, rest / 2, 1 - rest / 2))) / moves;
-};
-
 const PAGE_TONE = '[data-tone]:not([data-tone="note"], [data-card])';
-const READ_AT = 0.6;
-const UNREAD_AT = 0.25;
-const pagesByNotebook = new WeakMap<HTMLElement, HTMLElement[]>();
-
-const notebookPages = (notebook: HTMLElement): HTMLElement[] => {
-  const known = pagesByNotebook.get(notebook);
-  if (known) return known;
-  const pages = Array.from(notebook.querySelectorAll<HTMLElement>('[data-exp-page]'));
-  pagesByNotebook.set(notebook, pages);
-  return pages;
-};
-
 /** A scene can claim the header's tone for a moment (set by its hook). */
 let forcedTone: string | null = null;
 
@@ -62,23 +41,10 @@ const hooks: Record<string, (s: SceneState) => void> = {
     forcedTone = s.el.classList.contains('is-3d') && s.cur > 0.555 && s.cur < 0.625 ? 'wash' : null;
   },
   experience(s) {
-    const pages = notebookPages(s.el);
-    const zoom = smooth(remap(s.cur, 0.05, 0.22));
-    const turned = plateau(remap(s.cur, 0.28, 0.97), pages.length) * (pages.length - 1);
-    s.el.style.setProperty('--zoom', zoom.toFixed(4));
-    s.el.style.setProperty('--turned', turned.toFixed(4));
-    pages.forEach((page, index) => {
-      const uncovered = index === 0 ? zoom : turned - index + 1;
-      if (uncovered > READ_AT) page.classList.add('is-read');
-      else if (uncovered < UNREAD_AT) page.classList.remove('is-read');
-      page.classList.toggle('is-turning', turned > index && turned < index + 1);
-    });
+    updateRoute(s.el, s.cur);
   },
 };
 
-/** Two scenes tie a full-screen field of marker to a few highlighted words:
-    the hero wash closes in on them, the contact highlight grows out of them.
-    Both need the real position of those words inside their stage, as insets. */
 const measureMark = (selector: string, prefix: string) => {
   const mark = document.querySelector<HTMLElement>(selector);
   const scene = mark?.closest<HTMLElement>('[data-scene]');
@@ -93,31 +59,7 @@ const measureMark = (selector: string, prefix: string) => {
   scene.style.setProperty(`--${prefix}b`, `${(s.bottom - m.bottom).toFixed(1)}px`);
 };
 
-/** A heading that grows inside the colour taking over the screen starts at
-    the small thing that colour came from. This gives the offset from the
-    heading's resting place to that origin. Layout offsets for the heading
-    (it is transformed while we measure), client rects for the origin, whose
-    centre does not move when it is scaled or rotated. */
-const measureOrigin = (blockSelector: string, originSelector: string, prefix: string) => {
-  const block = document.querySelector<HTMLElement>(blockSelector);
-  const origin = document.querySelector<HTMLElement>(originSelector);
-  const scene = block?.closest<HTMLElement>('[data-scene]');
-  const stage = scene?.querySelector<HTMLElement>('.stage');
-  if (!block || !origin || !scene || !stage) return;
-  const o = origin.getBoundingClientRect();
-  const s = stage.getBoundingClientRect();
-  const blockX = block.offsetLeft + block.offsetWidth / 2;
-  const blockY = block.offsetTop + block.offsetHeight / 2;
-  scene.style.setProperty(`--${prefix}x`, `${(o.left + o.width / 2 - s.left - blockX).toFixed(1)}px`);
-  scene.style.setProperty(`--${prefix}y`, `${(o.top + o.height / 2 - s.top - blockY).toFixed(1)}px`);
-};
-
-const measureContact = () => {
-  measureMark('[data-contact-mark]', 'm');
-  measureMark('[data-hero-mark]', 'w');
-  measureOrigin('.cont__final--copy', '[data-contact-mark]', 'h');
-  measureOrigin('.serv__final', '.serv__note', 's');
-};
+const measureHeroMark = () => measureMark('[data-hero-mark]', 'w');
 
 export function initScroll() {
   const motion = root.classList.contains('motion');
@@ -228,6 +170,7 @@ export function initScroll() {
       apply(s);
     }
     updateHeader();
+    if (motion) updateScrollMarks();
     if (moving) request();
   };
 
@@ -286,15 +229,15 @@ export function initScroll() {
     inked.forEach((el) => inkIO.observe(el));
   }
 
-  measureContact();
+  measureHeroMark();
   addEventListener('scroll', request, { passive: true });
   addEventListener('resize', () => {
-    measureContact();
+    measureHeroMark();
     for (const s of scenes) s.snap = true;
     request();
   });
   document.fonts?.ready.then(() => {
-    measureContact();
+    measureHeroMark();
     request();
   });
   document.addEventListener('themechange', () => requestAnimationFrame(syncThemeColor));
