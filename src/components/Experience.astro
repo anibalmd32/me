@@ -1,6 +1,7 @@
 ---
-import ExperienceNotebook from './experience/ExperienceNotebook.astro';
-import Certificates from './experience/Certificates.astro';
+import RouteTrack from './experience/RouteTrack.astro';
+import RouteStation from './experience/RouteStation.astro';
+import { buildRoute } from '@/lib/route';
 import type { Dictionary } from '@/i18n';
 
 interface Props {
@@ -8,9 +9,109 @@ interface Props {
 }
 
 const { t } = Astro.props;
+const e = t.experience;
+const route = buildRoute(new Date());
+const stations = route.stops.flatMap((stop) => {
+  const copy = e.stops.find((candidate) => candidate.id === stop.id);
+  return copy ? [{ stop, copy }] : [];
+});
+const lastIndex = stations.length - 1;
 ---
 
 <section id="experience" data-page="2" data-topic={t.header.topics.experience}>
-  <ExperienceNotebook t={t} />
-  <Certificates t={t} />
+  <div class="scene scene--wide exp" data-scene="experience" style="--len: 320">
+    <div class="stage">
+      <div class="exp__inner wrap">
+        <header class="exp__head">
+          <h2 class="display h2">
+            {e.pre}<span class="exp__word" data-scroll-mark>{e.mark}<mark class="exp__ink" aria-hidden="true">{e.mark}</mark></span>{e.post}
+          </h2>
+          <p class="lead soft">{e.lead}</p>
+        </header>
+
+        <RouteTrack route={route} names={stations.map(({ copy }) => copy.company)} label={e.route} today={e.today} />
+
+        <ol class="exp__stops" data-route-rail>
+          {
+            stations.map(({ stop, copy }, index) => (
+              <RouteStation
+                stop={stop}
+                copy={copy}
+                next={index === lastIndex ? e.next : undefined}
+                endingLanes={index === lastIndex ? route.openLanes : []}
+              />
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
 </section>
+
+<script>
+  import { initRoute } from '@/scripts/route';
+  initRoute();
+</script>
+
+<style>
+  .exp {
+    padding-block: var(--section-gap) 0;
+  }
+
+  .exp__head {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .exp__word {
+    position: relative;
+    display: inline-block;
+  }
+
+  .exp__ink {
+    position: absolute;
+    inset: 0 auto auto 0;
+    white-space: nowrap;
+    clip-path: inset(-12% calc((1 - var(--inked, 1)) * 100%) -12% -0.2em);
+  }
+
+  .exp__stops {
+    position: relative;
+    margin-top: var(--block-gap);
+  }
+
+  :global(html.motion) .exp__stops::after {
+    content: '';
+    position: absolute;
+    inset: 0.9rem auto 0 calc(0.375rem - 2.25px);
+    width: 4.5px;
+    border-radius: 3px;
+    background: var(--marker);
+    transform-origin: 50% 0;
+    scale: 1 var(--rail, 0);
+    pointer-events: none;
+  }
+
+  @media (min-width: 52rem) and (orientation: landscape) and (min-height: 42rem) {
+    :global(html.motion) .exp {
+      padding-block: 0;
+    }
+
+    :global(html.motion) .exp__inner {
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: clamp(1rem, 4.5svh, 3rem);
+      height: 100%;
+      padding-block: calc(var(--header-h) + clamp(1.25rem, 5svh, 3.5rem)) clamp(1rem, 4svh, 2.5rem);
+    }
+
+    :global(html.motion) .exp__stops {
+      display: grid;
+      margin-top: 0;
+    }
+
+    :global(html.motion) .exp__stops::after {
+      display: none;
+    }
+  }
+</style>

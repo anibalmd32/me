@@ -1,0 +1,267 @@
+---
+import { sketchArrow } from '@/lib/sketch';
+import type { Lane } from '@/data/experience';
+import type { RouteStop } from '@/lib/route';
+import type { Dictionary } from '@/i18n';
+
+interface Props {
+  stop: RouteStop;
+  copy: Dictionary['experience']['stops'][number];
+  next?: string;
+  endingLanes?: readonly Lane[];
+}
+
+const { stop, copy, next, endingLanes = [] } = Astro.props;
+const arrow = sketchArrow([4, 24], [96, 18], 'next-station', -0.18, 16);
+const leavesAndReturns = stop.lane === 'branch' && !stop.ongoing;
+---
+
+<li
+  class:list={['station', `station--${stop.lane}`, leavesAndReturns && 'station--returns']}
+  id={`exp-${stop.id}`}
+  data-station
+>
+  {stop.lane === 'branch' && <span class="station__siding" aria-hidden="true" />}
+  <span class="station__dot" data-station-dot aria-hidden="true"></span>
+  {endingLanes.map((lane) => <span class:list={['station__open', `station__open--${lane}`]} aria-hidden="true" />)}
+
+  <article class="station__body">
+    <div class="station__what">
+      <p class="station__period hand">{copy.period}</p>
+      <h3 class="station__company display h2">{copy.company}</h3>
+      <p class="station__domain">{copy.domain}</p>
+    </div>
+    <div class="station__did">
+      <ul class="station__list dash-list">
+        {copy.bullets.map((bullet) => <li>{bullet}</li>)}
+      </ul>
+      {
+        next && (
+          <a class="station__next" href="#contact">
+            <span class="hand">{next}</span>
+            <svg viewBox="0 0 104 40" width="104" height="40" aria-hidden="true">
+              <path class="ink" d={arrow.shaft} />
+              <path class="ink" d={arrow.head} />
+            </svg>
+          </a>
+        )
+      }
+    </div>
+    <p class="station__year display" aria-hidden="true">{stop.year}</p>
+  </article>
+</li>
+
+<style>
+  .station {
+    --rail-x: 0.375rem;
+    --siding-x: 1.25rem;
+    position: relative;
+    padding: 0 0 clamp(2.5rem, 7vw, 3.75rem) 3rem;
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  }
+
+  .station::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 calc(var(--rail-x) - 1px);
+    width: 2px;
+    background: var(--ink);
+  }
+
+  .station:first-child::before {
+    top: 0.9rem;
+  }
+
+  .station:last-child {
+    padding-bottom: 1.25rem;
+  }
+
+  .station__dot {
+    position: absolute;
+    inset: 0.55rem auto auto 0;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  :global(html.motion) .station__dot {
+    z-index: 1;
+    transition:
+      background-color var(--state),
+      scale 0.3s var(--ease-snap);
+  }
+
+  :global(html.motion) .station.is-reached .station__dot {
+    background: var(--marker);
+    scale: 1.25;
+  }
+
+  .station--branch .station__dot {
+    left: calc(var(--siding-x) - var(--rail-x) + 1px);
+  }
+
+  .station__siding {
+    position: absolute;
+    inset: -0.9rem auto 0 var(--rail-x);
+    width: calc(var(--siding-x) - var(--rail-x));
+    border: solid var(--ink);
+    border-width: 2px 2px 0 0;
+    border-radius: 0 0.9rem 0 0;
+  }
+
+  .station--returns .station__siding {
+    bottom: 1.1rem;
+    border-bottom-width: 2px;
+    border-radius: 0 0.9rem 0.9rem 0;
+  }
+
+  .station__open {
+    position: absolute;
+    left: var(--rail-x);
+    bottom: 0;
+    width: 0.6rem;
+    height: 0.6rem;
+    border: solid var(--ink);
+    border-width: 0 2px 2px 0;
+    border-radius: 1px;
+    translate: -50% -20%;
+    rotate: 45deg;
+  }
+
+  .station__open--branch {
+    left: var(--siding-x);
+  }
+
+  .station__body {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .station__what {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: start;
+  }
+
+  .station__domain {
+    color: var(--fg-soft);
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+
+  .station__list {
+    display: grid;
+    gap: 0.6rem;
+    max-width: 58ch;
+  }
+
+  .station__next {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    color: var(--blue);
+    text-decoration: none;
+  }
+
+  .station__next svg {
+    flex: none;
+    transition: translate 0.3s var(--ease-out);
+  }
+
+  .station__next:hover svg {
+    translate: 0.4rem 0;
+  }
+
+  .station__year {
+    display: none;
+  }
+
+  @media (min-width: 52rem) {
+    .station__body {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: 1rem clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+
+    .station__did {
+      padding-top: 0.6rem;
+    }
+  }
+
+  @media (min-width: 52rem) and (orientation: landscape) and (min-height: 42rem) {
+    :global(html.motion) .station {
+      grid-area: 1 / 1;
+      padding: 0;
+      pointer-events: none;
+    }
+
+    :global(html.motion) .station.is-active {
+      pointer-events: auto;
+    }
+
+    :global(html.motion) .station::before,
+    :global(html.motion) .station__dot,
+    :global(html.motion) .station__siding,
+    :global(html.motion) .station__open {
+      display: none;
+    }
+
+    :global(html.motion) .station__body {
+      position: relative;
+      height: 100%;
+      align-content: start;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    :global(html.motion) .station__list li {
+      font-size: clamp(1.1rem, 1.45vw, 1.3rem);
+      line-height: 1.45;
+    }
+
+    :global(html.motion) .station__period,
+    :global(html.motion) .station__company,
+    :global(html.motion) .station__domain,
+    :global(html.motion) .station__did,
+    :global(html.motion) .station__year {
+      clip-path: inset(-0.75rem 104% -0.75rem -0.75rem);
+      transition: clip-path 0.14s linear;
+    }
+
+    :global(html.motion) .station.is-active .station__period,
+    :global(html.motion) .station.is-active .station__company,
+    :global(html.motion) .station.is-active .station__domain,
+    :global(html.motion) .station.is-active .station__did,
+    :global(html.motion) .station.is-active .station__year {
+      clip-path: inset(-0.75rem -0.75rem -0.75rem -0.75rem);
+      transition: clip-path 0.5s var(--ease-ink) calc(0.14s + var(--d, 0s));
+    }
+
+    :global(html.motion) .station__company {
+      --d: 0.05s;
+    }
+
+    :global(html.motion) .station__domain {
+      --d: 0.1s;
+    }
+
+    :global(html.motion) .station__did {
+      --d: 0.16s;
+    }
+  }
+
+  @media (min-width: 52rem) and (orientation: landscape) and (min-height: 50rem) {
+    :global(html.motion) .station__year {
+      --d: 0.2s;
+      display: block;
+      position: absolute;
+      inset: auto 0 0 auto;
+      z-index: -1;
+      font-size: clamp(8rem, 19vw, 15rem);
+      line-height: 0.8;
+      letter-spacing: -0.04em;
+      color: var(--blue-wash);
+    }
+  }
+</style>
