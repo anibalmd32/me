@@ -4,7 +4,6 @@ import Hero from './Hero.astro';
 import Skills from './Skills.astro';
 import Experience from './Experience.astro';
 import Projects from './Projects.astro';
-import Services from './Services.astro';
 import Products from './Products.astro';
 import Contact from './Contact.astro';
 import Signature from './Signature.astro';
@@ -49,14 +48,7 @@ const jsonLd = [
       description: t.meta.description,
       address: { '@type': 'PostalAddress', addressRegion: 'Apure', addressCountry: 'VE' },
       knowsLanguage: ['es', 'en'],
-      knowsAbout: SKILL_GROUPS.slice(0, 6).flatMap((group) => group.tools.map((tool) => t.skills.tools[tool])),
-      hasCredential: t.experience.certs.map((cert) => ({
-        '@type': 'EducationalOccupationalCredential',
-        name: cert.title,
-        credentialCategory: 'certificate',
-        url: cert.url,
-        recognizedBy: { '@type': 'Organization', name: cert.issuer },
-      })),
+      knowsAbout: SKILL_GROUPS.slice(0, 7).flatMap((group) => group.tools.map((tool) => t.skills.tools[tool])),
       ...(sameAs.length ? { sameAs } : {}),
     },
   },
@@ -86,10 +78,9 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <Hero lang={lang} t={t} />
-  <Skills t={t} />
   <Experience t={t} />
+  <Skills t={t} />
   <Projects lang={lang} t={t} />
-  <Services t={t} />
   <Products t={t} />
   <Contact t={t} />
   <Signature t={t} />

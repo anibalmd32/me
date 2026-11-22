@@ -22,7 +22,7 @@ const arrow = sketchArrow([4, 34], [150, 16], 'hero-arrow', -0.22, 20);
 ---
 
 <section id="top" class="hero-page" data-page="1" data-topic={t.header.topics.hero}>
-  <div class="scene hero" data-scene="hero" style="--len: 260">
+  <div class="scene hero" data-scene="hero" style="--len: 200">
     <div class="stage">
       <canvas class="hero__canvas" data-hero-canvas aria-hidden="true"></canvas>
       <div class="hero__wash" aria-hidden="true"></div>
@@ -155,6 +155,20 @@ const arrow = sketchArrow([4, 34], [150, 16], 'hero-arrow', -0.22, 20);
     margin: 2.5rem auto 0;
   }
 
+  @media (min-width: 62rem) {
+    .hero__copy {
+      display: grid;
+      grid-template-columns: minmax(0, 57fr) minmax(0, 43fr);
+      align-items: center;
+      gap: clamp(1rem, 3vw, 3rem);
+    }
+
+    .hero__slot {
+      width: min(100%, 26rem);
+      margin: 0 auto;
+    }
+  }
+
   .hero__fallback {
     width: 100%;
     height: auto;
@@ -232,6 +246,10 @@ const arrow = sketchArrow([4, 34], [150, 16], 'hero-arrow', -0.22, 20);
     left: 50%;
     translate: -50% 0;
     rotate: -4deg;
+  }
+
+  .hero__about-body {
+    max-width: 34rem;
   }
 
   .hero__about-title {
@@ -434,7 +452,7 @@ const arrow = sketchArrow([4, 34], [150, 16], 'hero-arrow', -0.22, 20);
     position: absolute;
     z-index: 1;
     inset: var(--header-h) 0 0 0;
-    align-content: center;
+    align-content: safe center;
     align-items: center;
     padding-block: 0 4svh;
   }

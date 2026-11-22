@@ -9,13 +9,14 @@ interface Props {
   /** Case study URL. Omit on the case study page itself. */
   caseStudy?: string;
   row?: boolean;
+  pending?: boolean;
 }
 
-const { t, repo, demo, caseStudy, row = false } = Astro.props;
+const { t, repo, demo, caseStudy, row = false, pending = true } = Astro.props;
 const links = [
   { href: repo, label: t.projects.source, icon: 'code' as const },
   { href: demo, label: t.projects.demo, icon: 'play' as const },
-];
+].filter((link) => pending || link.href);
 ---
 
 <ul class:list={['links', row && 'links--row']}>

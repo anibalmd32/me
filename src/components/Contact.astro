@@ -11,152 +11,59 @@ const { t } = Astro.props;
 const c = t.contact;
 ---
 
-<section id="contact" data-page="6" data-topic={t.header.topics.contact}>
-  <div class="scene scene--join cont" data-scene="contact" style="--len: 235">
-    <div class="stage">
-      <div class="cont__final wrap">
-        <h2 class="display h2">{c.title}</h2>
-        <p class="lead">{c.intro}</p>
-      </div>
+<section id="contact" class="cont" data-page="5" data-topic={t.header.topics.contact}>
+  <div class="cont__inner wrap">
+    <header class="cont__head" data-ink>
+      <h2 class="display h2">
+        {c.pre}<mark class="cont__mark">{c.mark}</mark>{c.post}
+      </h2>
+      <p class="lead soft">{c.intro}</p>
+    </header>
 
-      <div class="cont__cover" data-tone="blue">
-        <div class="cont__band" data-tone="marker" aria-hidden="true">
-          {/* Visual copy of the heading that waits underneath: it grows out of
-              the highlighted words with the marker, so the orange carries the
-              next page while it takes the screen. */}
-          <div class="cont__final cont__final--copy wrap">
-            <p class="display h2">{c.title}</p>
-            <p class="lead">{c.intro}</p>
-          </div>
-        </div>
-        <div class="cont__ask wrap">
-          <p class="cont__q display">
-            {c.pre}<mark data-contact-mark>{c.mark}</mark>{c.post}
-          </p>
-        </div>
-      </div>
+    <div class="cont-form" id="contact-form">
+      <ContactPostcard t={t} />
+      <SentNote title={c.successTitle} body={c.successBody} again={c.again} />
     </div>
-  </div>
-
-  <div class="cont-form wrap" id="contact-form">
-    <ContactPostcard t={t} />
-    <SentNote title={c.successTitle} body={c.successBody} again={c.again} />
   </div>
 </section>
 
 <style>
-  /* ---------- Static ---------- */
-  .cont__final {
-    display: grid;
-    gap: 1rem;
-    padding-top: var(--section-gap);
-  }
-
-  .cont__cover {
+  .cont {
     padding-block: var(--section-gap);
   }
 
-  .cont .stage {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-
-  .cont__band,
-  .cont__final--copy {
-    display: none;
-  }
-
-  .cont__q {
-    --hl: 1;
-    max-width: 16em;
-    font-size: var(--text-headline);
-  }
-
-  .cont__q mark {
-    white-space: nowrap;
-    color: color-mix(in srgb, var(--c-paper), var(--c-ink) calc(var(--hl) * 100%));
-    background-image: linear-gradient(var(--c-marker), var(--c-marker));
-    background-size: calc(var(--hl) * 100%) 84%;
-    background-position: 0 60%;
-  }
-
-  /* ---------- The form: a plain sheet taped onto the grid page ----------
-     The grid stops at its edge, so fields and text sit on a quiet ground. */
-  .cont-form {
-    padding-block: var(--block-gap) var(--section-gap);
-    scroll-margin-top: calc(var(--header-h) + 1rem);
-  }
-
-  /* ---------- Motion ----------
-     1. The marker highlights three words.
-     2. The highlight keeps growing until the whole screen is marker.
-     3. The marker sweeps off diagonally and the contact page is under it. */
   :global(html.motion) .cont {
-    --hl: clamp(0, calc((var(--p, 0) - 0.04) / 0.12), 1);
-    --b: clamp(0, calc((var(--p, 0) - 0.18) / 0.3), 1);
-    --w: clamp(0, calc((var(--p, 0) - 0.5) / 0.26), 1);
-    --edge: calc(var(--w) * 140% - 20%);
-    --mt: 45%;
-    --mb: 45%;
-    --ml: 10%;
-    --mr: 50%;
+    scroll-margin-top: 0;
   }
 
-  :global(html.motion) .cont .stage {
-    display: block;
-  }
-
-  :global(html.motion) .cont__final {
-    position: absolute;
-    inset: auto 0 clamp(2.5rem, 9svh, 5.5rem) 0;
-    padding: 0;
-  }
-
-  :global(html.motion) .cont__cover {
-    position: absolute;
-    inset: 0;
-    padding: 0;
-    clip-path: polygon(
-      calc(var(--edge) + 12%) 0,
-      140% 0,
-      140% 100%,
-      calc(var(--edge) - 12%) 100%
-    );
-  }
-
-  :global(html.motion) .cont__ask {
-    position: absolute;
-    inset: var(--header-h) 0 0 0;
+  .cont__inner {
     display: grid;
-    align-content: center;
-    padding-bottom: 14svh;
+    gap: var(--block-gap);
   }
 
-  /* The question gives way quickly: what grows in the marker is the answer. */
-  :global(html.motion) .cont__q {
-    --hl: inherit;
-    opacity: calc(1 - var(--b) * 3.4);
-  }
-
-  /* --hx/--hy (scroll.ts): from this block's resting place to the highlighted
-     words. It starts there, small, and arrives where the real heading waits. */
-  :global(html.motion) .cont__final--copy {
+  .cont__head {
     display: grid;
-    color: var(--c-ink);
-    transform-origin: 50% 50%;
-    transform: translate(calc((1 - var(--b)) * var(--hx, 0px)), calc((1 - var(--b)) * var(--hy, 0px)))
-      scale(calc(0.1 + 0.9 * var(--b)));
-    clip-path: inset(-12% calc((1 - clamp(0, calc((var(--b) - 0.1) / 0.3), 1)) * 104%) -12% -2%);
+    gap: 0.75rem;
   }
 
-  :global(html.motion) .cont__band {
-    display: block;
-    position: absolute;
-    inset: 0;
-    opacity: clamp(0, calc(var(--b) * 400), 1);
-    clip-path: inset(
-      calc((1 - var(--b)) * var(--mt)) calc((1 - var(--b)) * var(--mr)) calc((1 - var(--b)) * var(--mb))
-        calc((1 - var(--b)) * var(--ml)) round calc((1 - var(--b)) * 6px)
-    );
+  .cont__mark {
+    white-space: nowrap;
+  }
+
+  :global(html.motion) [data-ink] .cont__mark {
+    color: inherit;
+    background-size: 0% var(--mark-size);
+    transition:
+      background-size 0.5s var(--ease-ink) 0.2s,
+      color 0.2s linear 0.35s;
+  }
+
+  :global(html.motion) [data-ink].is-in .cont__mark {
+    color: var(--mark-fg);
+    background-size: 100% var(--mark-size);
+  }
+
+  .cont-form {
+    scroll-margin-top: calc(var(--header-h) + 1rem);
   }
 </style>

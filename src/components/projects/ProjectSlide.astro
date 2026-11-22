@@ -18,6 +18,7 @@ const { lang, t, project, index, total } = Astro.props;
 const slug = projectSlug(project);
 const href = projectPath(lang, slug);
 const { title, summary, stack, draft, repo, demo } = project.data;
+const SHOWN_TOOLS = 5;
 const position = t.projects.slide.replace('{n}', String(index + 1)).replace('{total}', String(total));
 ---
 
@@ -40,8 +41,8 @@ const position = t.projects.slide.replace('{n}', String(index + 1)).replace('{to
         {draft && <span class="draft-tag">{t.projects.draft}</span>}
       </h3>
       <p class="slide__summary">{summary}</p>
-      <StackLine label={t.projects.stack} stack={stack} />
-      <ProjectLinks t={t} repo={repo} demo={demo} caseStudy={href} row />
+      <StackLine label={t.projects.stack} stack={stack.slice(0, SHOWN_TOOLS)} />
+      <ProjectLinks t={t} repo={repo} demo={demo} caseStudy={href} row pending={false} />
     </div>
   </div>
 </div>

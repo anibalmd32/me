@@ -97,7 +97,6 @@
   --shadow-note: 0 1rem 1.7rem rgb(var(--shadow) / 0.18), 0 2px 0 rgb(0 0 0 / 0.04);
   --shadow-sheet: 0 1px 0 rgb(var(--shadow) / 0.06), 0 1.25rem 2.5rem -0.75rem rgb(var(--shadow) / 0.18);
   --shadow-tape: 0 2px 4px rgb(60 45 10 / 0.12);
-  --shadow-page: 0 48px 60px rgb(60 45 10 / 0.28);
 
   --text-display: clamp(2.5rem, 6vw, 5rem);
   --text-headline: clamp(2.2rem, 5.2vw, 4.25rem);
@@ -133,6 +132,12 @@
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   --grid-sizes: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+}
+
+@media (max-width: 30rem) {
+  :root {
+    --grid: rgb(64 104 168 / 0.045);
+  }
 }
 
 :root[data-theme='dark'] {
@@ -217,21 +222,6 @@ html[data-tone='blue'] .site-header {
   --btn-fg: var(--c-blue-deep);
   --focus: var(--c-sticky);
   --bad: var(--c-sticky);
-}
-
-body [data-tone='marker'],
-html[data-tone='marker'] .site-header {
-  --bg: var(--c-marker);
-  --fg: var(--c-ink);
-  --fg-soft: #3a2a1f;
-  --accent: var(--c-ink);
-  --rule: var(--c-ink);
-  --focus: var(--c-ink);
-}
-
-body [data-tone='desk'],
-html[data-tone='desk'] .site-header {
-  --bg: var(--paper-shade);
 }
 
 /* The hero's marked module, at the moment it fills the screen. */
@@ -321,11 +311,6 @@ body::after {
 [data-tone='blue'] ::selection {
   background: var(--c-marker);
   color: var(--c-ink);
-}
-
-[data-tone='marker'] ::selection {
-  background: var(--c-ink);
-  color: var(--c-marker);
 }
 
 h1,
@@ -527,6 +512,23 @@ html.motion .stage {
    so no hairline of paper shows between the two at fractional zoom levels. */
 .scene--join {
   margin-top: -1px;
+}
+
+@media (max-width: 51.99rem), (orientation: portrait), (max-height: 41.99rem) {
+  html.motion .scene--wide {
+    height: auto;
+  }
+
+  html.motion .scene--wide > .stage {
+    position: relative;
+    height: auto;
+    overflow: visible;
+    contain: none;
+  }
+
+  html.motion [data-page]:has(> .scene--wide) {
+    scroll-margin-top: 0;
+  }
 }
 
 html.motion .is-off {
